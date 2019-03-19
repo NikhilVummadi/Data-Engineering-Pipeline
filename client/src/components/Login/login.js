@@ -16,7 +16,10 @@ class Login extends Component {
   render() {
     console.log(this.props);
     return (
-      <div className="background">
+      <div
+        className="background"
+        style={{ position: "absolute", left: "45vw" }}
+      >
         <Modal.Dialog>
           <Modal.Header closeButton onClick={this.props.loginBtn}>
             <Modal.Title>Login</Modal.Title>
@@ -39,7 +42,7 @@ class Login extends Component {
             </Form>
           </Modal.Body>
           <Modal.Footer>
-            <button>Cancel</button>
+            <button onClick={this.props.loginBtn}>Cancel</button>
             <button>Login</button>
           </Modal.Footer>
         </Modal.Dialog>

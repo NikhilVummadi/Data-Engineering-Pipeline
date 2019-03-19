@@ -44,10 +44,12 @@ class App extends Component {
           <div style={{ flex: "1" }}>
             <MyFiles />
           </div>
-          {login}
+
           <div style={{ flex: "8", backgroundColor: "#a6a6a6" }}>
             <Canvas />
           </div>
+
+          {login}
         </div>
         {/* <div className="App">
           <header className="App-header">
