@@ -18,14 +18,14 @@ class Login extends Component {
     return (
       <div
         className="background"
-        style={{ position: "absolute", left: "45vw" }}
+        style={{ position: "absolute", left: "35vw" }}
       >
         <Modal.Dialog>
           <Modal.Header closeButton onClick={this.props.loginBtn}>
             <Modal.Title>Login</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <Form>
+            <Form style={{ padding: "10rem" }}>
               <Form.Group controlId="formBasicEmail">
                 <Form.Label>Email address</Form.Label>
                 <Form.Control type="email" placeholder="Enter email" />
@@ -39,6 +39,9 @@ class Login extends Component {
               <Button variant="primary" type="submit">
                 Submit
               </Button>
+
+              <Button variant="link">Forget Password</Button>
+              <Button variant="link">Register a new account</Button>
             </Form>
           </Modal.Body>
           <Modal.Footer>
