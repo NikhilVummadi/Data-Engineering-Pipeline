@@ -1,7 +1,7 @@
 import React from 'react';
 import { Navbar, Nav, NavDropdown, ButtonToolbar, Button } from 'react-bootstrap'
 
-const NavigationBar = ({ uploadFile }) => (
+const NavigationBar = ({ uploadFile}) => (
     <>
     <Navbar bg="light" expand="lg">
         <Navbar.Brand href="#home">AlanytiQ</Navbar.Brand>
@@ -10,17 +10,13 @@ const NavigationBar = ({ uploadFile }) => (
         <Nav className="mr-auto">
             <Nav.Link href="#home">Home</Nav.Link>
             <Nav.Link href="#link"></Nav.Link>
-            <NavDropdown title="Dropdown" id="basic-nav-dropdown">
-            <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
-            <NavDropdown.Item href="#action/3.2">Another action</NavDropdown.Item>
-            </NavDropdown>
             <ButtonToolbar>
-                <Button onClick={uploadFile}>Upload</Button>
+            <Button onClick={uploadFile}>Upload</Button>
             </ButtonToolbar>
         </Nav>
         <Button variant="success">Login</Button>
         </Navbar.Collapse>
-    </Navbar> 
+    </Navbar>
     </>
 );
 
