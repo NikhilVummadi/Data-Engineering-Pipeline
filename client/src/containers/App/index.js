@@ -5,10 +5,15 @@ import { NavigationBar, Canvas, MyFiles, Upload } from "../../components";
 import Login from "../../components/Login/login";
 
 class App extends Component {
-  state = {
-    loginState: false,
-    upState: false
-  };
+  constructor(props){
+    super(props);
+    this.state = {
+      canvasTitle: '',
+      loginState: false,
+      upState: false
+    }
+    this.fileSelection  =this.fileSelection.bind(this)
+  }
 
   loginBtn = () => {
     if (this.state.loginState == true) {
@@ -36,6 +41,16 @@ class App extends Component {
     console.log(this.state.upState);
   };
 
+  componentDidMount(){
+    
+  }
+
+  fileSelection = (section, e) => {
+    this.setState({canvasTitle: e})
+    console.log(e)
+    console.log(section)
+  }
+
   render() {
     let login;
     if (this.state.loginState === true) {
@@ -61,11 +76,11 @@ class App extends Component {
 
         <div style={{ display: "flex", flexDirection: "row" }}>
           <div style={{ flex: "1" }}>
-            <MyFiles />
+            <MyFiles fileSelection={this.fileSelection} />
           </div>
 
           <div style={{ flex: "8", backgroundColor: "#a6a6a6" }}>
-            <Canvas />
+            <Canvas title={this.state.canvasTitle}/>
           </div>
 
           {login}
