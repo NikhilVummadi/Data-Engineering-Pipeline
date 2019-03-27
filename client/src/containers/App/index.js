@@ -1,12 +1,13 @@
 import React, { Component } from "react";
 import logo from "./logo.svg";
 import "./App.css";
-import { NavigationBar, Canvas, MyFiles } from "../../components";
+import { NavigationBar, Canvas, MyFiles, Upload } from "../../components";
 import Login from "../../components/Login/login";
 
 class App extends Component {
   state = {
-    loginState: false
+    loginState: false,
+    upState: false
   };
 
   loginBtn = () => {
@@ -22,9 +23,18 @@ class App extends Component {
     console.log(this.state.loginState);
   };
 
-  uploadFile() {
-    console.log("File Uploading");
-  }
+  uploadFile = () => {
+    if (this.state.upState == true) {
+      this.setState({
+        upState: false
+      });
+    } else {
+      this.setState({
+        upState: true
+      });
+    }
+    console.log(this.state.upState);
+  };
 
   render() {
     let login;
@@ -32,6 +42,15 @@ class App extends Component {
       login = (
         <div>
           <Login loginBtn={this.loginBtn} />
+        </div>
+      );
+    }
+    
+    let upload;
+    if (this.state.upState === true) {
+      upload = (
+        <div>
+          <Upload uploadFile={this.uploadFile} />
         </div>
       );
     }
@@ -50,6 +69,7 @@ class App extends Component {
           </div>
 
           {login}
+          {upload}
         </div>
         {/* <div className="App">
           <header className="App-header">

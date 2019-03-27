@@ -15,7 +15,7 @@ import ButtonGroup from 'react-bootstrap/ButtonGroup'
 
 class Login extends Component {
   render() {
-    console.log(this.props);
+    // console.log(this.props);
     return (
       <div
         className="background"
