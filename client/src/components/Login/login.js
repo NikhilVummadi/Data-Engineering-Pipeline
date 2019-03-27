@@ -27,7 +27,9 @@ class Login extends Component {
           <Modal.Body>
             <Form>
               <Form.Group controlId="formBasicEmail">
-                <Form.Label>Email address</Form.Label>
+                <Form.Label style={{ width: "10rem" }}>
+                  Email address
+                </Form.Label>
                 <Form.Control type="email" placeholder="Enter email" />
               </Form.Group>
 
@@ -36,22 +38,28 @@ class Login extends Component {
                 <Form.Control type="password" placeholder="Password" />
               </Form.Group>
 
-              <div>
-                <Button variant="link">Forget Password</Button>
-                <Button variant="link">Register a new account</Button>
+              <div style={{ float: "right" }}>
+                <Button variant="link">Forgot Password?</Button>
+                <br />
+
+                <Button
+                  variant="dark"
+                  onClick={this.props.loginBtn}
+                  style={{ marginRight: "1rem" }}
+                >
+                  Cancel
+                </Button>
+                <Button variant="primary" type="submit">
+                  Submit
+                </Button>
               </div>
-              <Button variant="primary" type="submit">
-                Submit
-              </Button>
-              <Button
-                variant="dark"
-                onClick={this.props.loginBtn}
-                style={{ float: "right" }}
-              >
-                Cancel
-              </Button>
             </Form>
           </Modal.Body>
+          <Modal.Footer>
+            <Button variant="link" style={{ width: "30rem" }}>
+              Register a new account
+            </Button>
+          </Modal.Footer>
         </Modal.Dialog>
       </div>
     );
