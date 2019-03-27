@@ -5,7 +5,8 @@ import PublicFiles from './PublicFiles';
 const MyFiles = ({ fileSelection }) => (
     <>
         <PrivateFiles fileSelection={fileSelection} fileType='Private' />
-        <PublicFiles fileSelection={fileSelection} fileType='Public' />    
+        <hr/>
+        <PublicFiles fileSelection={fileSelection} fileType='Public' />
     </>
 );
 
