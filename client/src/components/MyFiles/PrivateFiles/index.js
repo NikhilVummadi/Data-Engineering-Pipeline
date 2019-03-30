@@ -1,19 +1,33 @@
-import React from 'react';
-import NavLink from 'react-bootstrap/NavLink';
+import React, { Component } from "react";
+import NavLink from "react-bootstrap/NavLink";
 
-const PrivateFiles = ({ fileSelection, fileType }) => (
-    <>
-        <h3>Private</h3>
-        <ul>
-            <li><NavLink onClick={() => fileSelection(fileType, 'Customers')}>Customers</NavLink></li>
-                <ul>
-                    <li><NavLink onClick={() => fileSelection(fileType, 'Customers_1')}>Customers_1</NavLink></li>
-                </ul>
-            <li><NavLink onClick={() => fileSelection(fileType, 'Schedules')}>Schedules</NavLink></li>
-            <li><NavLink onClick={() => fileSelection(fileType, 'Clients')}>Clients</NavLink></li>
-        </ul>
-    </>
-);
+class PrivateFiles extends Component {
+  getStyle = () => {
+    return {
+      width: "200px",
+      listStyleType: "none",
+      // backgroundColor: "cyan",
+      color: "white",
+      padding: "0.5rem",
+      border: "white groove 1px",
+      margin: "0.5rem 0.5rem 0.5rem 0"
+    };
+  };
 
+  render() {
+    return (
+      <div>
+        <li style={this.getStyle()}>
+          <NavLink
+            key={this.props.id}
+            onClick={() => this.props.fileSelection("Private", this.props.name)}
+          >
+            {this.props.name}
+          </NavLink>
+        </li>
+      </div>
+    );
+  }
+}
 
 export default PrivateFiles;
