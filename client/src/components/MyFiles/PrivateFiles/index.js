@@ -9,7 +9,6 @@ class PrivateFiles extends Component {
       // backgroundColor: "cyan",
       color: "white",
       padding: "0.5rem",
-      border: "white groove 1px",
       margin: "0.5rem 0.5rem 0.5rem 0"
     };
   };

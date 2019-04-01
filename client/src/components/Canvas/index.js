@@ -73,7 +73,12 @@ class Canvas extends Component {
                   <></>
                 )}
                 <div style={{ float: "right" }}>
-                  <Button onClick={() => next(fileType, publicFile)}>
+                  <Button
+                    onClick={e => {
+                      next(fileType, publicFile);
+                      this.props.moveFile(this.props.canvasTitle);
+                    }}
+                  >
                     Next
                   </Button>
                 </div>

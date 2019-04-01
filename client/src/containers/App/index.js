@@ -5,6 +5,7 @@ import { NavigationBar, Canvas, MyFiles, Upload } from "../../components";
 import Login from "../../components/Login/login";
 import CanvasBanner from "../../images/canvasBanner.jpg";
 import NavLink from "react-bootstrap/NavLink";
+import Tree from "../../components/MyFiles/tree";
 
 class App extends Component {
   constructor(props) {
@@ -118,6 +119,34 @@ class App extends Component {
     );
   };
 
+  //move from private to public
+  moveFile = title => {
+    console.log(this.state.canvasTitle);
+    if (title !== undefined) {
+      const list = [...this.state.publicList, title];
+      this.setState({
+        publicList: list
+      });
+      console.log(list);
+    }
+    console.log(this.state.publicList);
+  };
+
+  fillBottombar = item => {
+    //map through list
+    return (
+      <li>
+        <NavLink onClick={() => this.fileSelection("Public", item)}>
+          {item}
+        </NavLink>
+      </li>
+    );
+  };
+
+  checkboxTrigger = checkbox => {
+    console.log(checkbox);
+  };
+
   render() {
     let login;
     if (this.state.loginState === true) {
@@ -160,9 +189,13 @@ class App extends Component {
             <MyFiles
               fileSelection={this.fileSelection}
               fillSidebar={this.fillSidebar}
+              fillBottombar={this.fillBottombar}
               privateList={this.state.privateList}
+              publicList={this.state.publicList}
             />
           </div>
+          <Tree />
+          <div />
 
           <div
             style={{
@@ -175,6 +208,8 @@ class App extends Component {
               fileSection={this.state.fileSection}
               next={this.nextCanvas}
               nextCanvas={this.state.nextCanvas}
+              moveFile={this.moveFile}
+              canvasTitle={this.state.canvasTitle}
             />
           </div>
 

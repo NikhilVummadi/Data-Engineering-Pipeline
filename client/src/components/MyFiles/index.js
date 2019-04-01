@@ -16,6 +16,11 @@ class MyFiles extends Component {
         />
         <hr />
         <h4>Public</h4>
+        <Public
+          publicList={this.props.publicList}
+          fileSelection={this.props.fileSelection}
+          fillBottombar={this.props.fillSidebar}
+        />
       </div>
     );
   }

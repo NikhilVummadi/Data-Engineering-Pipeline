@@ -6,8 +6,13 @@ class Public extends Component {
   render() {
     console.log(this.props);
 
-    return this.props.privateList.map(item => (
-      <PublicFiles key={item.id} name={item} />
+    return this.props.publicList.map(item => (
+      <PublicFiles
+        key={item.id}
+        name={item}
+        fileSelection={this.props.fileSelection}
+        fillBottombar={this.props.fillSidebar}
+      />
     ));
   }
 }
