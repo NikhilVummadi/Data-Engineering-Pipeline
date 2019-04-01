@@ -1,19 +1,44 @@
-import React from 'react';
-import NavLink from 'react-bootstrap/NavLink';
+import React, { Component } from "react";
+import NavLink from "react-bootstrap/NavLink";
+import 'react-checkbox-tree/lib/react-checkbox-tree.css';
 
-const PrivateFiles = ({ fileSelection, fileType }) => (
-    <>
-        <h3>Private</h3>
-        <ul>
-            <li><NavLink onClick={() => fileSelection(fileType, 'Customers')}>Customers</NavLink></li>
-                <ul>
-                    <li><NavLink onClick={() => fileSelection(fileType, 'Customers_1')}>Customers_1</NavLink></li>
-                </ul>
-            <li><NavLink onClick={() => fileSelection(fileType, 'Schedules')}>Schedules</NavLink></li>
-            <li><NavLink onClick={() => fileSelection(fileType, 'Clients')}>Clients</NavLink></li>
-        </ul>
-    </>
-);
+const nodes = [{
+    value: this.props.id,
+    label: this.props.name,
+    children: [
+        { value: 'images', label: 'Images' },
+        { value: 'data', label: 'Data' },
+    ],
+}];
 
+class PrivateFiles extends Component {
+  getStyle = () => {
+    return {
+      width: "200px",
+      listStyleType: "none",
+      // backgroundColor: "cyan",
+      color: "white",
+      padding: "0.5rem",
+      margin: "0.5rem 0.5rem 0.5rem 0"
+    };
+  };
+
+  render() {
+    return (
+      <div>
+        <li style={this.getStyle()}>
+        <CheckboxTree
+                nodes={nodes}
+                checked={this.state.checked}
+                expanded={this.state.expanded}
+                onCheck={checked => this.setState({ checked })}
+                onExpand={expanded => this.setState({ expanded })}
+                onClick={() => this.props.fileSelection("Private", this.props.name)}
+            />
+        </li>
+      </div>
+    );
+  }
+}
 
 export default PrivateFiles;
