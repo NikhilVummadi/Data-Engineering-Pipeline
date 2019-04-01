@@ -206,8 +206,8 @@ class App extends Component {
               publicList={this.state.publicList}
             />
           </div>
-          <Tree />
-          <div />
+          {/* <Tree /> */}
+          {/* <div /> */}
 
           <div
             style={{
