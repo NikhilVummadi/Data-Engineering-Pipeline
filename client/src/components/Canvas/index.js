@@ -8,7 +8,7 @@ class Canvas extends Component {
     super(props);
     this.state = {
       fileType: "master",
-      publicFile: false
+      publicFile: true
     };
   }
 
@@ -17,8 +17,10 @@ class Canvas extends Component {
   };
 
   handlePublic = e => {
-    const { publicFile } = this.state;
+    let { publicFile } = this.state;
     this.setState({ publicFile: !publicFile });
+    this.props.checkboxTrigger(this.state.publicFile);
+    console.log(this.state.publicFile);
   };
 
   render() {
@@ -66,7 +68,7 @@ class Canvas extends Component {
                       type="checkbox"
                       label="Make the file Public"
                       onChange={this.handlePublic}
-                      checked={publicFile}
+                      checked={!publicFile}
                     />
                   </>
                 ) : (

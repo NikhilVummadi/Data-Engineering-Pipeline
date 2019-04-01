@@ -19,7 +19,8 @@ class App extends Component {
       fileSection: "",
       dataChecks: false,
       publicList: [],
-      privateList: []
+      privateList: [],
+      checked: false
     };
     this.fileSelection = this.fileSelection.bind(this);
     this.loginSubmit = this.loginSubmit.bind(this);
@@ -121,15 +122,17 @@ class App extends Component {
 
   //move from private to public
   moveFile = title => {
-    console.log(this.state.canvasTitle);
-    if (title !== undefined) {
-      const list = [...this.state.publicList, title];
-      this.setState({
-        publicList: list
-      });
-      console.log(list);
+    console.log(this.state.checked);
+    if (this.state.checked === true) {
+      if (title !== undefined) {
+        const list = [...this.state.publicList, title];
+        this.setState({
+          publicList: list
+        });
+        console.log(list);
+      }
+      console.log(this.state.publicList);
     }
-    console.log(this.state.publicList);
   };
 
   fillBottombar = item => {
@@ -145,6 +148,15 @@ class App extends Component {
 
   checkboxTrigger = checkbox => {
     console.log(checkbox);
+    if (checkbox === false) {
+      this.setState({
+        checked: false
+      });
+    } else {
+      this.setState({
+        checked: true
+      });
+    }
   };
 
   render() {
@@ -210,6 +222,7 @@ class App extends Component {
               nextCanvas={this.state.nextCanvas}
               moveFile={this.moveFile}
               canvasTitle={this.state.canvasTitle}
+              checkboxTrigger={this.checkboxTrigger}
             />
           </div>
 
