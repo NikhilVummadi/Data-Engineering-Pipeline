@@ -41,7 +41,7 @@ class PublicFiles extends Component {
 
     return (
       <div>
-        <li>
+        <li style={this.getStyle()}>
           <CheckboxTree
             nodes={this.state.nodes}
             checked={this.state.checked}
