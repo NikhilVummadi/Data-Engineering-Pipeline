@@ -3,7 +3,7 @@ const express = require('express');
 
 const app = express();
 
-// intialize routes
+// intialize routes here
 app.use('/api',require('./routes/api'));
 
 
