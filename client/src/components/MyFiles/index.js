@@ -7,6 +7,7 @@ const MyFiles = ({ privateData, publicData, onToggle, onClick, fileSelection }) 
         <div style={{minHeight: `50%`}}>
             <PrivateFiles data={privateData} onToggle={onToggle} fileSelection={fileSelection} fileType='Private' />
         </div>
+        <hr/>
         <div style={{minHeight: `50%`}}>
         <PublicFiles data={publicData} onToggle={onToggle} onClick={onClick} fileSelection={fileSelection} fileType='Public' />    
         </div>
