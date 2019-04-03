@@ -206,7 +206,11 @@ class App extends Component {
               publicList={this.state.publicList}
             />
           </div>
-          <Tree />
+          <a class="twitter-timeline"
+            href="https://twitter.com/TwitterDev"
+            data-tweet-limit="3">
+          Tweets by @TwitterDev
+          </a>
           <div />
 
           <div

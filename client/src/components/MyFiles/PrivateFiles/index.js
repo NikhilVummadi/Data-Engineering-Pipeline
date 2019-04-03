@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import NavLink from "react-bootstrap/NavLink";
 import 'react-checkbox-tree/lib/react-checkbox-tree.css';
+import CheckboxTree from 'react-checkbox-tree';
 
 const nodes = [{
     value: this.props.id,

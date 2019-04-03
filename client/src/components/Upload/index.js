@@ -37,32 +37,12 @@ class Upload extends Component {
           </Modal.Header>
           <Modal.Body>
             <Form>
-<<<<<<< HEAD
             <input type="file" id="fName" accept=".csv" onChange={e => handleFileChosen(e.target.files[0])}>
             </input>
             <br></br>
             <br></br>
             <br></br>
 			  <Button variant="primary" type="submit" onClick={this.props.uploadFile}>
-=======
-              <input
-                type="file"
-                id="fName"
-                onChange={e => (currentFile = e.target.files[0])}
-              />
-              <br />
-              <br />
-              <br />
-              <Button
-                variant="primary"
-                type="submit"
-                onClick={e => {
-                  this.props.uploadFile(e);
-                  this.props.incrementOnUpload(currentFile);
-                  console.log(currentFile.name);
-                }}
-              >
->>>>>>> 2d915bc8360b3cf822d5d2626c1f0972914460b9
                 Submit
               </Button>
             </Form>
