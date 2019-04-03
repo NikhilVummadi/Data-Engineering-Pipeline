@@ -4,6 +4,56 @@ import "./App.css";
 import { NavigationBar, Canvas, MyFiles, Upload } from "../../components";
 import Login from "../../components/Login/login";
 
+const privateData = {
+  name: 'root',
+  toggled: true,
+  children: [
+      {
+          name: 'Contacts',
+          children: [
+              { name: 'Customers.csv' },
+              { name: 'Phone.csv' }
+          ]
+      },
+      {
+          name: 'Buyers',
+          children: [
+              {
+                  name: 'Schools',
+                  children: [
+                      { name: 'NJIT' },
+                      { name: 'Rutgers' }
+                  ]
+              }
+          ]
+      }
+  ]
+};
+const publicData = {
+  name: 'root',
+  toggled: true,
+  children: [
+      {
+          name: 'Items',
+          children: [
+              { name: 'Phones.csv' },
+              { name: 'Stocks.csv' }
+          ]
+      },
+      {
+          name: 'Sales',
+          children: [
+              {
+                  name: 'Newark',
+                  children: [
+                      { name: 'IHOP' },
+                      { name: 'GDS' }
+                  ]
+              }
+          ]
+      }
+  ]
+};
 class App extends Component {
   constructor(props){
     super(props);
@@ -13,6 +63,7 @@ class App extends Component {
       upState: false
     }
     this.fileSelection  =this.fileSelection.bind(this)
+    this.onToggle = this.onToggle.bind(this);
   }
 
   loginBtn = () => {
@@ -51,6 +102,17 @@ class App extends Component {
     console.log(section)
   }
 
+  onToggle(node, toggled){
+    if(this.state.cursor){this.state.cursor.active = false;}
+    node.active = true;
+    if(node.children){ node.toggled = toggled; }
+    this.setState({ cursor: node });
+  }
+
+  onClick(e){
+    console.log("askdfhbglsdf")
+  }
+
   render() {
     let login;
     if (this.state.loginState === true) {
@@ -75,8 +137,8 @@ class App extends Component {
         <NavigationBar uploadFile={this.uploadFile} loginBtn={this.loginBtn} />
 
         <div style={{ display: "flex", flexDirection: "row" }}>
-          <div style={{ flex: "1" }}>
-            <MyFiles fileSelection={this.fileSelection} />
+          <div style={{ flex: "1", paddingLeft: 5 }}>
+            <MyFiles privateData={privateData} publicData={publicData} onToggle={this.onToggle} onClick={this.onClick} fileSelection={this.fileSelection} />
           </div>
 
           <div style={{ flex: "8", backgroundColor: "#a6a6a6" }}>
