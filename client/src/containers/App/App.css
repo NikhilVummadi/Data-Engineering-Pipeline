@@ -23,6 +23,11 @@
   color: #61dafb;
 }
 
+body{
+  background-image: url('../../images/accounting.jpg');
+  background-size: cover;
+}
+
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);

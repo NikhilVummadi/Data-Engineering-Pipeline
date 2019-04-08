@@ -28,7 +28,7 @@ class Canvas extends Component {
     const { title, fileSection, next } = this.props;
     const { fileType, publicFile } = this.state;
     return (
-      <>
+      <div className="container">
         {title ? (
           <>
             <h3 style={{ textAlign: "center" }}>{title}</h3>
@@ -90,7 +90,7 @@ class Canvas extends Component {
         ) : (
           <></>
         )}
-      </>
+      </div>
     );
   }
 }
