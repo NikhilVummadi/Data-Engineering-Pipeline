@@ -78,7 +78,7 @@ class Canvas extends Component {
                   <Button
                     onClick={e => {
                       next(fileType, publicFile);
-                      this.props.moveFile(this.props.canvasTitle);
+                      this.props.moveFile(this.props.title);
                     }}
                   >
                     Next
