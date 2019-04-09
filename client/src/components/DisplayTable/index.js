@@ -6,7 +6,7 @@ class DisplayTable extends Component {
 		
 		return (
 			<div>
-				<Table striped bordered hover size="sm">
+				<Table striped bordered hover responsive size="sm" variant="dark">
 					<thead>
 						<th>A</th>
 						<th>B</th>
