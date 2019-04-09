@@ -2,13 +2,14 @@ import React, { Component } from "react";
 import { ButtonToolbar, Button, Form } from "react-bootstrap";
 import "./Canvas.css";
 import DataChecks from "./DataChecks";
+import DisplayTable from "../../components/DisplayTable"
 
 class Canvas extends Component {
   constructor(props) {
     super(props);
     this.state = {
       fileType: "master",
-      publicFile: true
+      publicFile: true,
     };
   }
 
@@ -75,6 +76,7 @@ class Canvas extends Component {
                   <></>
                 )}
                 <div style={{ float: "right" }}>
+				  
                   <Button
                     onClick={e => {
                       next(fileType, publicFile);
@@ -86,6 +88,7 @@ class Canvas extends Component {
                 </div>
               </Form>
             </div>
+			<DisplayTable />
           </>
         ) : (
           <></>

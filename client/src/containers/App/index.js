@@ -6,6 +6,7 @@ import Login from "../../components/Login/login";
 import CanvasBanner from "../../images/canvasBanner.jpg";
 import NavLink from "react-bootstrap/NavLink";
 import Tree from "../../components/MyFiles/tree";
+import DisplayTable from "../../components/DisplayTable"
 
 class App extends Component {
   constructor(props) {
@@ -20,10 +21,17 @@ class App extends Component {
       dataChecks: false,
       publicList: [],
       privateList: [],
-      checked: false
+      checked: false,
+	  viewFile : false
     };
     this.fileSelection = this.fileSelection.bind(this);
     this.loginSubmit = this.loginSubmit.bind(this);
+  }
+  
+  viewFile = () => {
+	  this.setState({
+		  viewFile: !this.state.viewFile
+	  });
   }
 
   loginBtn = () => {
@@ -223,12 +231,14 @@ class App extends Component {
               moveFile={this.moveFile}
               canvasTitle={this.state.canvasTitle}
               checkboxTrigger={this.checkboxTrigger}
+			  
             />
           </div>
 
           {login}
           {upload}
         </div>
+		<DisplayTable />
         {/* <div className="App">
           <header className="App-header">
             <img src={logo} className="App-logo" alt="logo" />
