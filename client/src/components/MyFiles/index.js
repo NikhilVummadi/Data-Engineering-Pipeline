@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import Private from "./Private";
-import Public from "./Public";
+// import Public from "./Public";
 import SortableTree from "react-sortable-tree";
 import "react-sortable-tree/style.css";
 import FileExplorerTheme from 'react-sortable-tree-theme-file-explorer';
@@ -54,18 +54,21 @@ class MyFiles extends Component {
     return (
       <div>
         <h4>Files</h4>
-        <div style={{ height: 1000, width: 400 }}>
-          <SortableTree
-            treeData={this.state.treeData}
-            onChange={treeData => this.setState({ treeData })}
-            getNodeKey={({ node }) => node._id}
-            generateNodeProps={
-              (onclick = node => {
-                if (node.treeIndex === 2) console.log(node.node.title);
-              })
-            }
-            theme={FileExplorerTheme}
-          />
+        <div style={{ height: '80vh', width: '20vw', fontSize: '15px' }}>
+            <SortableTree
+              treeData={this.state.treeData}
+              onChange={treeData => this.setState({ treeData })}
+              getNodeKey={({ node }) => node._id}
+              generateNodeProps={
+                (onclick = node => {
+                  if (node.treeIndex === 2) console.log(node.node.title);
+                })
+                (oncontextmenu = node => {
+                  console.log("RIGHT CLICK");
+                })
+              }
+              theme={FileExplorerTheme}
+            />
         </div>
       </div>
     );

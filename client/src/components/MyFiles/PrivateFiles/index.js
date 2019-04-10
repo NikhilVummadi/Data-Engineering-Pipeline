@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import NavLink from "react-bootstrap/NavLink";
 // import CheckboxTree from "react-checkbox-tree";
 // import "react-checkbox-tree/lib/react-checkbox-tree.css";
 import SortableTree from "react-sortable-tree";
@@ -76,7 +75,6 @@ class PrivateFiles extends Component {
 
   render() {
     this.state.treeData[0].title = this.props.name;
-
     return (
       <li style={this.getStyle()}>
         <div style={{ height: 400, width: 400 }}>

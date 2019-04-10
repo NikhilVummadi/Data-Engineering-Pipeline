@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import NavLink from "react-bootstrap/NavLink";
 import CheckboxTree from "react-checkbox-tree";
 import "react-checkbox-tree/lib/react-checkbox-tree.css";
 
@@ -23,6 +22,10 @@ class PublicFiles extends Component {
         }
       ]
     };
+  }
+
+  handleClick = () +> {
+    console.log("RIGHT CLICK");
   }
 
   getStyle = () => {

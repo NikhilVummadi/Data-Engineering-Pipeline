@@ -1,7 +1,7 @@
 import React, { Component } from "react";
-import { ButtonToolbar, Button, Form } from "react-bootstrap";
+// import { ButtonToolbar, Button, Form } from "react-bootstrap";
 import "./Canvas.css";
-import DataChecks from "./DataChecks";
+// import DataChecks from "./DataChecks";
 import DisplayTable from "../../components/DisplayTable"
 
 class Canvas extends Component {
@@ -26,8 +26,8 @@ class Canvas extends Component {
 
   render() {
     console.log(this.props);
-    const { title, fileSection, next } = this.props;
-    const { fileType, publicFile } = this.state;
+    const { title } = this.props;
+    // const { fileType, publicFile } = this.state;
     return (
       <div className="container">
         {title ? (

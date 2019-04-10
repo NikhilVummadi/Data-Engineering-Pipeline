@@ -1,13 +1,62 @@
 import React, { Component } from "react";
-import logo from "./logo.svg";
 import "./App.css";
 import { NavigationBar, Canvas, MyFiles, Upload } from "../../components";
 import Login from "../../components/Login/login";
 import CanvasBanner from "../../images/canvasBanner.jpg";
 import NavLink from "react-bootstrap/NavLink";
-import Tree from "../../components/MyFiles/tree";
+// import Tree from "../../components/MyFiles/tree";
 //import DisplayTable from "../../components/DisplayTable"
 
+// const privateData = {
+//   name: 'root',
+//   toggled: true,
+//   children: [
+//       {
+//           name: 'Contacts',
+//           children: [
+//               { name: 'Customers.csv' },
+//               { name: 'Phone.csv' }
+//           ]
+//       },
+//       {
+//           name: 'Buyers',
+//           children: [
+//               {
+//                   name: 'Schools',
+//                   children: [
+//                       { name: 'NJIT' },
+//                       { name: 'Rutgers' }
+//                   ]
+//               }
+//           ]
+//       }
+//   ]
+// };
+// const publicData = {
+//   name: 'root',
+//   toggled: true,
+//   children: [
+//       {
+//           name: 'Items',
+//           children: [
+//               { name: 'Phones.csv' },
+//               { name: 'Stocks.csv' }
+//           ]
+//       },
+//       {
+//           name: 'Sales',
+//           children: [
+//               {
+//                   name: 'Newark',
+//                   children: [
+//                       { name: 'IHOP' },
+//                       { name: 'GDS' }
+//                   ]
+//               }
+//           ]
+//       }
+//   ]
+// };
 class App extends Component {
   constructor(props) {
     super(props);
@@ -25,10 +74,12 @@ class App extends Component {
     };
     this.fileSelection = this.fileSelection.bind(this);
     this.loginSubmit = this.loginSubmit.bind(this);
+    this.onToggle = this.onToggle.bind(this);
+    this.loginSubmit = this.loginSubmit.bind(this)
   }
 
   loginBtn = () => {
-    if (this.state.loginState == true) {
+    if (this.state.loginState) {
       this.setState({
         loginState: false
       });
@@ -51,7 +102,7 @@ class App extends Component {
   };
 
   loginSubmit = () => {
-    if (this.state.loginState == true) {
+    if (this.state.loginState) {
       this.setState({
         loginState: false
       });
@@ -66,7 +117,7 @@ class App extends Component {
   };
 
   uploadFile = () => {
-    if (this.state.upState == true) {
+    if (this.state.upState) {
       this.setState({
         upState: false
       });
@@ -160,6 +211,17 @@ class App extends Component {
     }
   };
 
+  onToggle(node, toggled){
+    if(this.state.cursor){this.state.cursor.active = false;}
+    node.active = true;
+    if(node.children){ node.toggled = toggled; }
+    this.setState({ cursor: node });
+  }
+
+  onClick(e){
+    console.log("askdfhbglsdf")
+  }
+
   render() {
     let login;
     if (this.state.loginState === true) {
@@ -190,7 +252,7 @@ class App extends Component {
     }
 
     return (
-      <>
+      <div style={{height: '100vh', backgroundImage: `url(${CanvasBanner})`, backgroundPosition: 'center', backgroundSize: 'cover', backgroundRepeat: 'no-repeat'}}>
         <NavigationBar
           uploadFile={this.uploadFile}
           username={this.state.username}
@@ -198,7 +260,7 @@ class App extends Component {
           loginBtn={this.loginBtn}
         />
         <div style={{ display: "flex", flexDirection: "row" }}>
-          <div style={{ flex: "1" }}>
+          <div style={{ flex: "1", borderRight: '1px ridge', backgroundColor: 'white'}}>
             <MyFiles
               fileSelection={this.fileSelection}
               fillSidebar={this.fillSidebar}
@@ -210,7 +272,7 @@ class App extends Component {
 
           <div
             style={{
-              flex: "9",
+              flex: "10",
               backgroundImage: `url(require(${CanvasBanner}))`
             }}
           >
@@ -227,23 +289,7 @@ class App extends Component {
           {login}
           {upload}
         </div>
-        {/* <div className="App">
-          <header className="App-header">
-            <img src={logo} className="App-logo" alt="logo" />
-            <p>
-              Edit <code>src/App.js</code> and save to reload.
-            </p>
-            <a
-              className="App-link"
-              href="https://reactjs.org"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Learn React
-            </a>
-          </header>
-        </div> */}
-      </>
+      </div>
     );
   }
 }

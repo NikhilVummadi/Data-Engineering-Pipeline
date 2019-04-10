@@ -4,11 +4,6 @@ import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
 import { Button } from "react-bootstrap";
 import "./login.css";
-import ModalDialog from "react-bootstrap/ModalDialog";
-import ModalHeader from "react-bootstrap/ModalHeader";
-import ModalTitle from "react-bootstrap/ModalTitle";
-import ModalBody from "react-bootstrap/ModalBody";
-import ModalFooter from "react-bootstrap/ModalFooter";
 
 //import { Modal, ModalDialog, modalHeader, ModalFooter, ModalTitle, ModalBody } from 'react-bootstrap/Modal'
 
