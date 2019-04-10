@@ -40,7 +40,6 @@ class Canvas extends Component {
                 margin: "4"
               }}
             >
-
             </div>
 			<DisplayTable />
           </>

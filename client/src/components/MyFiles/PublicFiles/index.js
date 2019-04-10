@@ -36,6 +36,7 @@ class PublicFiles extends Component {
   };
 
   render() {
+    console.log(this.props);
     this.state.nodes[0].label = this.props.name;
     this.state.nodes[0].label = this.props.name.toLowerCase();
 

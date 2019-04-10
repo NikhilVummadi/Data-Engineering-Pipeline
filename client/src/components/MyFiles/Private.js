@@ -3,16 +3,23 @@ import PrivateFiles from "./PrivateFiles";
 
 class Private extends Component {
   render() {
-    console.log(this.props);
+    console.log(this.props.privateList);
+    // this.state.treeData[0].children = this.props.privateList;
 
-    return this.props.privateList.map(item => (
-      <PrivateFiles
-        key={item.id}
-        name={item}
-        fileSelection={this.props.fileSelection}
-        fillSidebar={this.props.fillSidebar}
-      />
-    ));
+    return (
+      <a
+        href="#"
+        key={this.props.privateList[this.props.item]}
+        onClick={() => {
+          this.props.fileSelection(
+            "Private",
+            this.props.privateList[this.props.item]
+          );
+        }}
+      >
+        {this.props.privateList[this.props.item]}
+      </a>
+    );
   }
 }
 

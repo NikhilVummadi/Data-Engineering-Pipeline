@@ -86,10 +86,7 @@ class App extends Component {
   };
 
   componentDidMount() {
-    this.setState({ nextCanvas: false });
-  }
-  componentDidUpdate() {
-    this.fillSidebar();
+    // this.setState({ nextCanvas: false });
   }
 
   fileSelection = (section, e) => {
@@ -100,7 +97,14 @@ class App extends Component {
 
   //increment list with upload item whenever submit is clicked
   incrementOnUpload = fileName => {
-    if (fileName !== undefined) {
+    let flag = true;
+    // make sure file with same name doesn't exist in public section/change later to update data instead
+    for (var i in this.state.privateList) {
+      if (this.state.privateList[i] === fileName.name) {
+        flag = false;
+      }
+    }
+    if (fileName !== undefined && flag) {
       const list = [...this.state.privateList, fileName.name];
       this.setState({
         privateList: list
@@ -109,26 +113,22 @@ class App extends Component {
     }
   };
 
-  //fill sidebar with filename from list
-  fillSidebar = item => {
-    //map through list
-    return (
-      <li>
-        <NavLink onClick={() => this.fileSelection("Private", item)}>
-          {item}
-        </NavLink>
-      </li>
-    );
-  };
-
   //move from private to public
   moveFile = title => {
-    console.log(this.state.checked);
-    if (this.state.checked === true) {
+    let flag = true;
+    // make sure file with same name doesn't exist in public section/change later to update data instead
+    for (var i in this.state.publicList) {
+      if (this.state.publicList[i] === title) {
+        flag = false;
+      }
+    }
+    console.log(this.state.publicList);
+    if (this.state.checked === true && flag) {
       if (title !== undefined) {
         const list = [...this.state.publicList, title];
         this.setState({
-          publicList: list
+          publicList: list,
+          fileSelection: "Public"
         });
         console.log(list);
       }
@@ -207,8 +207,6 @@ class App extends Component {
               publicList={this.state.publicList}
             />
           </div>
-          {/* <Tree /> */}
-          {/* <div /> */}
 
           <div
             style={{
@@ -220,9 +218,7 @@ class App extends Component {
               title={this.state.canvasTitle}
               fileSection={this.state.fileSection}
               next={this.nextCanvas}
-              nextCanvas={this.state.nextCanvas}
               moveFile={this.moveFile}
-              canvasTitle={this.state.canvasTitle}
               checkboxTrigger={this.checkboxTrigger}
 			  
             />
