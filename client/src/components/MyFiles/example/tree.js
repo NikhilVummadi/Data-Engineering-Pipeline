@@ -2,7 +2,7 @@ module.exports = {
   module: "react-ui-tree",
   children: [
     {
-      module: "d",
+      module: "Private",
       collapsed: true,
       children: [
         {

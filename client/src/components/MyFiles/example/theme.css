@@ -6,12 +6,12 @@
   width: 300px;
   overflow-x: hidden;
   overflow-y: auto;
-  background-color: #21252b;
-  top: 4rem;
+  background-color: #170c49;
+  top: 3.5rem;
 }
 
 .m-node.placeholder {
-  border: 1px dashed #1385e5;
+  border: 1px dashed #648baa;
 }
 
 .m-node .inner {
@@ -27,5 +27,5 @@
 }
 
 .m-node .node.is-active {
-  background-color: #31363f;
+  background-color: #888;
 }
