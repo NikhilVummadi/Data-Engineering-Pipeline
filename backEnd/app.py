@@ -13,29 +13,33 @@ def hello():
 
 @app.route('/listFiles')
 def list_files():
-    root = "C:\\Users\\Abdul\\Documents\\Analytiq"
+    root = "Analytiq"
     thisdict = {}
     for path, subdirs, files in os.walk(root):
-        x = str(path).replace('C:\\Users\\Abdul\\Documents', "")
-        x=(x[1:])
-        thisdict[x] = [subdirs,files]
+        #x = str(path).replace('C:\\Users\\Abdul\\Documents', "")
+        #x=(x[1:])
+        thisdict[str(path)] = [subdirs,files]
     return jsonify(thisdict)
 
 @app.route('/openFile', methods=['POST'])
 def openFile():
     stuff = request.get_json()
     fname = stuff["name"]
-    for root, dirs, files in os.walk("C:\\Users\\Abdul\\Data-Engineering-Pipeline\\backEnd\\Analytiq"):
+    for root, dirs, files in os.walk("Analytiq"):
         if fname in files:
             way = os.path.join(root, fname)
-    holder = {}
+    head = []
+    data = []
     with open(way) as csvfile:
         readCSV = csv.reader(csvfile, delimiter=',')
         n = 0
         for row in readCSV:
-            holder[str(n)]=row
-            n = n+1
-    return jsonify(holder)
+            if n == 0:
+                head = row
+                n += 1
+            else:
+                data.append(row)
+    return jsonify(head, data)
 
 
 if __name__ == '__main__':
