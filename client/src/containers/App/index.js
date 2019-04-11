@@ -5,6 +5,7 @@ import { NavigationBar, Canvas, MyFiles, Upload } from "../../components";
 import Login from "../../components/Login/login";
 import CanvasBanner from "../../images/canvasBanner.jpg";
 import NavLink from "react-bootstrap/NavLink";
+import Test from "../../components/MyFiles/example/app";
 
 class App extends Component {
   constructor(props) {
@@ -158,6 +159,8 @@ class App extends Component {
     }
   };
 
+  createNewFile = treelocation => {};
+
   render() {
     let login;
     if (this.state.loginState === true) {
@@ -197,12 +200,13 @@ class App extends Component {
         />
         <div style={{ display: "flex", flexDirection: "row" }}>
           <div style={{ flex: "1" }}>
-            <MyFiles
+            <Test
               fileSelection={this.fileSelection}
               fillSidebar={this.fillSidebar}
               fillBottombar={this.fillBottombar}
               privateList={this.state.privateList}
               publicList={this.state.publicList}
+              createNewFile={this.createNewFile}
             />
           </div>
 
