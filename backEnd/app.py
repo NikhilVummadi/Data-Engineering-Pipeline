@@ -9,7 +9,7 @@ app = Flask(__name__)
 
 @app.route('/')
 def hello():
-    return("Hello World")
+    return("This is the backEnd: Use /listFiles for a json of the files and folders")
 
 @app.route('/listFiles')
 def list_files():
@@ -30,11 +30,11 @@ def openFile():
             way = os.path.join(root, fname)
     holder = {}
     with open(way) as csvfile:
-    readCSV = csv.reader(csvfile, delimiter=',')
-    n = 0
-    for row in readCSV:
-        holder[str(n)]=row
-        n = n+1
+        readCSV = csv.reader(csvfile, delimiter=',')
+        n = 0
+        for row in readCSV:
+            holder[str(n)]=row
+            n = n+1
     return jsonify(holder)
 
 
