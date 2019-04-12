@@ -12,7 +12,6 @@
     "react-dom": "^16.8.3",
     "react-scripts": "^2.1.8",
     "react-treeview": "^0.4.7",
-    "react-ui-sortable-tree": "^2.6.15",
     "react-ui-tree": "^4.0.0"
   },
   "scripts": {

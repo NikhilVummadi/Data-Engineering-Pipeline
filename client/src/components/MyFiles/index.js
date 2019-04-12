@@ -97,7 +97,8 @@ class MyFiles extends Component {
   };
 
   updateTree = treeData => {
-    this.setState({ treeData });
+    console.log(treeData[0].children);
+    this.setState({ treeData: [...treeData, { title: "newitem" }] });
   };
 
   render() {
