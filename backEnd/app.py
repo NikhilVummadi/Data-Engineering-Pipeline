@@ -1,5 +1,6 @@
 from flask import Flask
-import sys,os
+import sys
+import os
 import json
 from flask import jsonify
 from flask import request
@@ -7,9 +8,11 @@ import csv
 
 app = Flask(__name__)
 
+
 @app.route('/')
 def hello():
     return("This is the backEnd: Use /listFiles for a json of the files and folders")
+
 
 @app.route('/listFiles')
 def list_files():
@@ -17,9 +20,10 @@ def list_files():
     thisdict = {}
     for path, subdirs, files in os.walk(root):
         #x = str(path).replace('C:\\Users\\Abdul\\Documents', "")
-        #x=(x[1:])
-        thisdict[str(path)] = [subdirs,files]
+        # x=(x[1:])
+        thisdict[str(path)] = [subdirs, files]
     return jsonify(thisdict)
+
 
 @app.route('/openFile', methods=['POST'])
 def openFile():
