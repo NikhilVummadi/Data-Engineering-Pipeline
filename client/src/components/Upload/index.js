@@ -4,6 +4,7 @@ import {
   Modal,
   Form,
 } from "react-bootstrap";
+import "./Upload.css";
 
 //import { Modal, ModalDialog, modalHeader, ModalFooter, ModalTitle, ModalBody } from 'react-bootstrap/Modal'
 
@@ -35,6 +36,10 @@ class Upload extends Component {
                 onClick={e => {
                   this.props.uploadFile(e);
                   this.props.incrementOnUpload(currentFile);
+                  this.props.createNewTree(
+                    this.props.treeData,
+                    currentFile.name
+                  );
                   console.log(currentFile.name);
                 }}
               >
