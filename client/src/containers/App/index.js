@@ -4,8 +4,15 @@ import { NavigationBar, Canvas, MyFiles, Upload } from "../../components";
 import Login from "../../components/Login/login";
 import CanvasBanner from "../../images/canvasBanner.jpg";
 import NavLink from "react-bootstrap/NavLink";
-// import Tree from "../../components/MyFiles/tree";
-//import DisplayTable from "../../components/DisplayTable"
+import SortableTree from "react-sortable-tree";
+import axios from "axios";
+import "react-sortable-tree/style.css"; // This only needs to be imported once in your app
+import {
+  getNodeAtPath,
+  addNodeUnderParent,
+  removeNodeAtPath
+} from "react-sortable-tree";
+// import Test from "../../components/MyFiles/example/app";
 
 // const privateData = {
 //   name: 'root',
@@ -71,6 +78,18 @@ class App extends Component {
       publicList: [],
       privateList: [],
       checked: false,
+      treeData: [
+        {
+          title: "Private",
+          children: [{ title: "Folder", children: [] }]
+        }
+      ],
+      treeDataTwo: [
+        {
+          title: "Public",
+          children: [{ title: "Folder" }]
+        }
+      ]
     };
     this.fileSelection = this.fileSelection.bind(this);
     this.loginSubmit = this.loginSubmit.bind(this);
@@ -138,6 +157,24 @@ class App extends Component {
 
   componentDidMount() {
     // this.setState({ nextCanvas: false });
+    var config = {
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*"
+      }
+    };
+    axios
+      .get(
+        "http://127.0.0.1:5000/listFiles",
+        { label: "Test", text: "Test" },
+        config
+      )
+      .then(function(response) {
+        console.log(response);
+      })
+      .catch(function(error) {
+        console.log(error);
+      });
   }
 
   fileSelection = (section, e) => {
@@ -221,6 +258,99 @@ class App extends Component {
   onClick(e){
     console.log("askdfhbglsdf")
   }
+  createNewTree = (tree, newFile) => {
+    let newObj = tree;
+    let obj;
+    let list = [...this.state.privateList, newFile];
+    let newList = [];
+    console.log(newFile);
+
+    list.map(item => {
+      obj = { title: item };
+      newList.push(obj);
+      console.log(obj);
+    });
+    console.log(list);
+    newObj[0].children[0].children = newList;
+
+    this.setState({
+      treeData: newObj
+    });
+
+    // return list;
+  };
+
+  /////    /      //tree functions//      /    ////
+  updateTreeData = treeData => {
+    this.setState({
+      treeData
+    });
+  };
+
+  checkArrayUpdate = () => {
+    //check for update button click through prop
+    console.log(this.state.upState);
+  };
+
+  addNode = (rowInfo) => {
+    console.log(rowInfo);
+    let NEW_NODE = { title: "" };
+    let { node, treeIndex, path } = rowInfo;
+    path.pop();
+    let parentNode = getNodeAtPath({
+      treeData: this.state.treeData,
+      path: path,
+      getNodeKey: ({ treeIndex }) => treeIndex,
+      ignoreCollapsed: true
+    });
+    let getNodeKey = ({ node: object, treeIndex: number }) => {
+      return number;
+    };
+    let parentKey = getNodeKey(parentNode);
+    if (parentKey == -1) {
+      parentKey = null;
+    }
+    let newTree = addNodeUnderParent({
+      treeData: this.state.treeData,
+      newNode: NEW_NODE,
+      expandParent: true,
+      parentKey: parentKey,
+      getNodeKey: ({ treeIndex }) => treeIndex
+    });
+    this.setState({ treeData: newTree.treeData });
+  };
+
+  removeNode = (rowInfo) => {
+    let { node, treeIndex, path } = rowInfo;
+    this.setState({
+      treeData: removeNodeAtPath({
+        treeData: this.state.treeData,
+        path: path, // You can use path from here
+        getNodeKey: ({ node: TreeNode, treeIndex: number }) => {
+          // console.log(number);
+          return number;
+        },
+
+        ignoreCollapsed: false
+      })
+    });
+  };
+
+  checkNode = (rowInfo) => {
+    console.log(rowInfo.treeIndex);
+    if (rowInfo.treeIndex !== 0) {
+      return [
+        <div>
+          <button label="Delete" onClick={event => this.removeNode(rowInfo)}>
+            Remove
+          </button>
+          <button label="Add" onClick={event => this.addNode(rowInfo)}>
+            Add
+          </button>
+        </div>
+      ];
+    }
+  };
 
   render() {
     let login;
@@ -246,6 +376,8 @@ class App extends Component {
           <Upload
             uploadFile={this.uploadFile}
             incrementOnUpload={this.incrementOnUpload}
+            createNewTree={this.createNewTree}
+            treeData={this.state.treeData}
           />
         </div>
       );
@@ -259,39 +391,91 @@ class App extends Component {
           password={this.state.password}
           loginBtn={this.loginBtn}
         />
-        <div style={{ display: "flex", flexDirection: "row" }}>
-          <div style={{ flex: "1", borderRight: '1px ridge', backgroundColor: 'white'}}>
-            <MyFiles
-              fileSelection={this.fileSelection}
-              fillSidebar={this.fillSidebar}
-              fillBottombar={this.fillBottombar}
-              privateList={this.state.privateList}
-              publicList={this.state.publicList}
-            />
-          </div>
 
-          <div
-            style={{
-              flex: "10",
-              backgroundImage: `url(require(${CanvasBanner}))`
-            }}
-          >
-            <Canvas
-              title={this.state.canvasTitle}
-              fileSection={this.state.fileSection}
-              next={this.nextCanvas}
-              moveFile={this.moveFile}
-              checkboxTrigger={this.checkboxTrigger}
-			  
-            />
-          </div>
+        <div>
+          <div style={{ display: "flex", flexDirection: "row" }}>
+            <div style={{ flex: "1" }}>
+              <div style={{ height: 400, width: 400 }}>
+                <SortableTree
+                  treeData={this.state.treeData}
+                  onChange={this.updateTreeData}
+                  onMoveNode={({ node, treeIndex, path }) =>
+                    global.console.debug(
+                      "node:",
+                      node,
+                      "treeIndex:",
+                      treeIndex,
+                      "path:",
+                      path
+                    )
+                  }
+                  canDrag={({ node }) => !node.noDragging}
+                  canDrop={({ node }) => !node.noDrop}
+                  generateNodeProps={rowInfo => ({
+                    buttons: this.checkNode(rowInfo)
+                  })}
+                />
 
-          {login}
-          {upload}
+                <div style={{ height: 400, width: 400 }}>
+                  <SortableTree
+                    treeData={this.state.treeDataTwo}
+                    onChange={treeDataTwo => this.setState({ treeDataTwo })}
+                    onMoveNode={({ node, treeIndex, path }) =>
+                      global.console.debug(
+                        "node:",
+                        node,
+                        "treeIndex:",
+                        treeIndex,
+                        "path:",
+                        path
+                      )
+                    }
+                    canDrag={({ node }) => !node.noDragging}
+                    canDrop={({ node }) => !node.noDrop}
+                    canNodeHaveChildren={({ node }) => node.noCopy}
+                  />
+                </div>
+              </div>
+            </div>
+            {login}
+            {upload}
+            <div
+              style={{
+                flex: "9",
+                backgroundImage: `url(require(${CanvasBanner}))`
+              }}
+            >
+              <Canvas
+                title={this.state.canvasTitle}
+                fileSection={this.state.fileSection}
+                next={this.nextCanvas}
+                moveFile={this.moveFile}
+                checkboxTrigger={this.checkboxTrigger}
+              />
+            </div>
+          </div>
         </div>
+
+        {/* <div className="App">
+          <header className="App-header">
+            <img src={logo} className="App-logo" alt="logo" />
+            <p>
+              Edit <code>src/App.js</code> and save to reload.
+            </p>
+            <a
+              className="App-link"
+              href="https://reactjs.org"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Learn React
+            </a>
+          </header>
+        </div> */}
       </div>
     );
   }
-}
+};
+
 
 export default App;

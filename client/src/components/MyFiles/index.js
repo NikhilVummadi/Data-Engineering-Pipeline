@@ -5,43 +5,33 @@ import SortableTree from "react-sortable-tree";
 import "react-sortable-tree/style.css";
 import FileExplorerTheme from 'react-sortable-tree-theme-file-explorer';
 
-class MyFiles extends Component {
+
+export default class Tree extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
+      checkUpdate: false,
+      prevArray: [],
+      upState: true,
       treeData: [
         {
           title: "Source",
-          children: [
-            {
-              title: "Private",
-              children: this.takeTwo(this.props.privateList)
-            },
-            {
-              title: "Public"
-            }
-          ]
+          children: [{ title: "Private" }, { title: "Public" }]
         }
       ]
     };
   }
 
-  takeTwo = list => {
-    let newList = [];
-    for (var i in list) {
-      newList.push({
-        title: (
-          <Private
-            fileSelection={this.props.fileSelection}
-            privateList={this.props.privateList}
-            item={i}
-          />
-        )
-      });
-    }
-    console.log(list);
-    return newList;
+  checkArrayUpdate = () => {
+    //check for update button click through prop
+    console.log(this.props.upState);
+  };
+
+  changeTree = () => {
+    this.setState({
+      treeData: [{ title: "title", children: [] }]
+    });
   };
 
   render() {
@@ -74,5 +64,3 @@ class MyFiles extends Component {
     );
   }
 }
-
-export default MyFiles;
