@@ -2,10 +2,13 @@ import React, { Component } from "react";
 import "./App.css";
 import { NavigationBar, Canvas, MyFiles, Upload } from "../../components";
 import Login from "../../components/Login/login";
+import FileType from "../../components/FileType";
 import CanvasBanner from "../../images/canvasBanner.jpg";
 import NavLink from "react-bootstrap/NavLink";
 import SortableTree from "react-sortable-tree";
 import FileExplorerTheme from 'react-sortable-tree-theme-file-explorer';
+import { Overlay, Popover, OverlayTrigger } from 'react-bootstrap';
+import Tooltip from 'react-bootstrap/Tooltip';
 import axios from "axios";
 import "react-sortable-tree/style.css"; // This only needs to be imported once in your app
 import {
@@ -13,6 +16,7 @@ import {
   addNodeUnderParent,
   removeNodeAtPath
 } from "react-sortable-tree";
+
 // import Test from "../../components/MyFiles/example/app";
 
 // const privateData = {
@@ -66,8 +70,10 @@ import {
 //   ]
 // };
 class App extends Component {
-  constructor(props) {
-    super(props);
+  constructor(props, context) {
+    super(props, context);
+    this.attachRef = target => this.setState({target});
+    
     this.state = {
       canvasTitle: "",
       loginState: false,
@@ -80,6 +86,8 @@ class App extends Component {
       privateList: [],
       header: [],
       data: [],
+      showOverlay: false,
+      //show: false,
       checked: false,
       treeData: [
         {
@@ -97,7 +105,17 @@ class App extends Component {
     this.fileSelection = this.fileSelection.bind(this);
     this.loginSubmit = this.loginSubmit.bind(this);
     this.onToggle = this.onToggle.bind(this);
-    this.loginSubmit = this.loginSubmit.bind(this)
+    this.loginSubmit = this.loginSubmit.bind(this);
+    this.rightClick=this.rightClick.bind(this);
+  }
+
+  rightClick = (e) => {
+    e.preventDefault();
+    const {showOverlay} = this.state;
+    this.setState({
+      showOverlay: !showOverlay
+    });
+    console.log("Right Click Acknowledged")
   }
 
   loginBtn = () => {
@@ -151,11 +169,10 @@ class App extends Component {
     // console.log(this.state.upState);
   };
 
-  nextCanvas = (fileType, publicFile) => {
-    console.log("File Type: ", fileType);
-    console.log("Keep it private or public: ", publicFile);
-    console.log("Canv");
-    this.setState({ dataChecks: true });
+  submitFileType = (fileName, fileType) => {
+    console.log("File Name: ", fileName)
+    console.log("File Type: ", fileType)
+    // this.setState({ dataChecks: true });
   };
 
   componentDidMount() {
@@ -198,9 +215,12 @@ class App extends Component {
     // Store the first index  in labels, and the second index in data
     // Pass those variables to Canvas
     // Replace the variavles in Canvas to use the parameters
-
-
   };
+
+  fileType = (e) => {
+    //e.preventDefault()
+    console.log("Right click")
+  }
 
   //increment list with upload item whenever submit is clicked
   incrementOnUpload = fileName => {
@@ -357,6 +377,8 @@ class App extends Component {
     });
   };
 
+  
+
   checkNode = (rowInfo) => {
     console.log(rowInfo.treeIndex);
     if (rowInfo.treeIndex !== 0) {
@@ -374,12 +396,13 @@ class App extends Component {
   };
 
   fileType = (e) => {
-    e.preventDefault()
+    //e.preventDefault()
     console.log("Right click")
   }
 
   render() {
     let login;
+    const {showOverlay, target} = this.state;
     if (this.state.loginState === true) {
       login = (
         <div>
@@ -439,13 +462,28 @@ class App extends Component {
                   canDrop={({ node }) => !node.noDrop}
                   generateNodeProps={rowInfo => ({
                     buttons: this.checkNode(rowInfo),
+                    //ref: this.attachRef,
+                    onContextMenu: this.rightClick,
                     onClick: () =>  this.fileSelection(rowInfo.node.title),
                     //onContextMenu: (e) => this.fileType()
                   })}
                   theme={FileExplorerTheme}
                 />
-
+                <Overlay target={target} show={showOverlay} placement="bottom">
+                {props => (
+                  <Popover >
+                    <FileType />
+                  </Popover>
+                )}
+                </Overlay>
+                {/*
+                <FileType
+                  show={this.state.showOverlay}
+                  submitFileType={this.submitFileType}
+                />
+                */}
                 <div style={{ height: 400, width: 400 }}>
+
                   <SortableTree
                     treeData={this.state.treeDataTwo}
                     onChange={treeDataTwo => this.setState({ treeDataTwo })}
@@ -458,13 +496,13 @@ class App extends Component {
                         "path:",
                         path
                       )
-
                     }
                     canDrag={({ node }) => !node.noDragging}
                     canDrop={({ node }) => !node.noDrop}
                     canNodeHaveChildren={({ node }) => node.noCopy}
                     theme={FileExplorerTheme}
                   />
+
                 </div>
               </div>
             </div>
