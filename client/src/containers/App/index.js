@@ -5,6 +5,7 @@ import Login from "../../components/Login/login";
 import CanvasBanner from "../../images/canvasBanner.jpg";
 import NavLink from "react-bootstrap/NavLink";
 import SortableTree from "react-sortable-tree";
+import FileExplorerTheme from 'react-sortable-tree-theme-file-explorer';
 import axios from "axios";
 import "react-sortable-tree/style.css"; // This only needs to be imported once in your app
 import {
@@ -77,6 +78,8 @@ class App extends Component {
       dataChecks: false,
       publicList: [],
       privateList: [],
+      header: [],
+      data: [],
       checked: false,
       treeData: [
         {
@@ -108,7 +111,7 @@ class App extends Component {
       });
     }
     // console.log(this.state.loginState);
-  };
+  };  
 
   handleUserChange = e => {
     console.log("Asdfsad");
@@ -177,10 +180,26 @@ class App extends Component {
       });
   }
 
-  fileSelection = (section, e) => {
-    this.setState({ canvasTitle: e });
-    this.setState({ fileSection: section });
-    console.log(e, " file selected");
+  fileSelection = async (e) => {
+    if(e.includes('.csv')){
+      this.setState({ canvasTitle: e });
+      console.log(e, " file selected");
+      let res = await axios.post(`http://127.0.0.1:5000/openFile`,  {"name": e})
+      let header = res.data[0]
+      let data = res.data[1]
+      // await this.setState({ header: header })
+      console.log("header",  header)
+      console.log("data", data)
+    }
+    //Create these 2 states
+    // labels = []
+    // data = []
+    // Use axios to get the data of this csv from the backend
+    // Store the first index  in labels, and the second index in data
+    // Pass those variables to Canvas
+    // Replace the variavles in Canvas to use the parameters
+
+
   };
 
   //increment list with upload item whenever submit is clicked
@@ -258,6 +277,8 @@ class App extends Component {
   onClick(e){
     console.log("askdfhbglsdf")
   }
+
+
   createNewTree = (tree, newFile) => {
     let newObj = tree;
     let obj;
@@ -352,6 +373,11 @@ class App extends Component {
     }
   };
 
+  fileType = (e) => {
+    e.preventDefault()
+    console.log("Right click")
+  }
+
   render() {
     let login;
     if (this.state.loginState === true) {
@@ -412,8 +438,11 @@ class App extends Component {
                   canDrag={({ node }) => !node.noDragging}
                   canDrop={({ node }) => !node.noDrop}
                   generateNodeProps={rowInfo => ({
-                    buttons: this.checkNode(rowInfo)
+                    buttons: this.checkNode(rowInfo),
+                    onClick: () =>  this.fileSelection(rowInfo.node.title),
+                    //onContextMenu: (e) => this.fileType()
                   })}
+                  theme={FileExplorerTheme}
                 />
 
                 <div style={{ height: 400, width: 400 }}>
@@ -429,10 +458,12 @@ class App extends Component {
                         "path:",
                         path
                       )
+
                     }
                     canDrag={({ node }) => !node.noDragging}
                     canDrop={({ node }) => !node.noDrop}
                     canNodeHaveChildren={({ node }) => node.noCopy}
+                    theme={FileExplorerTheme}
                   />
                 </div>
               </div>

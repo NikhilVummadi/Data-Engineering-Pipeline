@@ -26,7 +26,7 @@ class Canvas extends Component {
 
   render() {
     console.log(this.props);
-    const { title } = this.props;
+    const { title, header, data } = this.props;
     // const { fileType, publicFile } = this.state;
     return (
       <div className="container">
@@ -41,7 +41,7 @@ class Canvas extends Component {
               }}
             >
             </div>
-			<DisplayTable />
+			<DisplayTable header={header} data={data} />
           </>
         ) : (
           <></>
