@@ -471,8 +471,8 @@ class App extends Component {
                 />
                 <Overlay target={target} show={showOverlay} placement="bottom">
                 {props => (
-                  <Popover >
-                    <FileType />
+                  <Popover title="AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA">
+                    AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAHHHHHHHHHHHHHHHHHHHHHHHHH
                   </Popover>
                 )}
                 </Overlay>
