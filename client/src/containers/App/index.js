@@ -19,6 +19,7 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      number: 0,
       canvasTitle: "",
       loginState: false,
       username: "",
@@ -197,15 +198,41 @@ class App extends Component {
     }
   };
 
+  treeClick = name => {
+    console.log(name);
+
+    this.setState({
+      canvasTitle: name,
+      fileSection: "Private"
+    });
+  };
+
   createNewTree = (tree, newFile) => {
     let newObj = tree;
     let obj;
     let list = [...this.state.privateList, newFile];
     let newList = [];
+    let name = newFile;
+    let number = 0;
+
     console.log(newFile);
+    console.log(tree);
 
     list.map(item => {
-      obj = { title: item };
+      obj = {
+        title: (
+          <a
+            href="#"
+            onClick={() => {
+              this.treeClick(item);
+            }}
+          >
+            {item}
+          </a>
+        ),
+        sub: item
+      };
+
       newList.push(obj);
       console.log(obj);
     });
@@ -213,7 +240,8 @@ class App extends Component {
     newObj[0].children[0].children = newList;
 
     this.setState({
-      treeData: newObj
+      treeData: newObj,
+      privateList: [...this.state.privateList, newFile]
     });
 
     // return list;
@@ -233,7 +261,7 @@ class App extends Component {
 
   addNode(rowInfo) {
     console.log(rowInfo);
-    let NEW_NODE = { title: "" };
+    let NEW_NODE = { title: "placeholder" };
     let { node, treeIndex, path } = rowInfo;
     path.pop();
     let parentNode = getNodeAtPath({
@@ -256,11 +284,16 @@ class App extends Component {
       parentKey: parentKey,
       getNodeKey: ({ treeIndex }) => treeIndex
     });
-    this.setState({ treeData: newTree.treeData });
+
+    this.setState({
+      treeData: newTree.treeData
+    });
   }
 
   removeNode(rowInfo) {
     let { node, treeIndex, path } = rowInfo;
+    let newArray = [];
+
     this.setState({
       treeData: removeNodeAtPath({
         treeData: this.state.treeData,
@@ -271,13 +304,27 @@ class App extends Component {
         },
 
         ignoreCollapsed: false
-      })
+      }),
+      privateList: newArray
     });
   }
 
   checkNode(rowInfo) {
     console.log(rowInfo.treeIndex);
-    if (rowInfo.treeIndex !== 0) {
+
+    if (rowInfo.treeIndex === 0) {
+      return;
+    }
+
+    if (rowInfo.treeIndex === 1) {
+      return [
+        <div>
+          <button label="Add" onClick={event => this.addNode(rowInfo)}>
+            Add
+          </button>
+        </div>
+      ];
+    } else {
       return [
         <div>
           <button label="Delete" onClick={event => this.removeNode(rowInfo)}>
