@@ -39,7 +39,7 @@ class App extends Component {
       treeDataTwo: [
         {
           title: "Public",
-          children: [{ title: "Folder" }]
+          children: [{ title: "Folder", children: [] }]
         }
       ]
     };
@@ -151,8 +151,40 @@ class App extends Component {
     }
   };
 
+  move = (title, tree, list) => {
+    console.log("move from private to public");
+    let treeD = tree;
+    let name = title;
+    let newList = [];
+    let newObj;
+
+    for (let i in list) {
+      newObj = {
+        title: (
+          <a
+            href="#"
+            onClick={() => {
+              this.treeClick(list[i]);
+            }}
+          >
+            {list[i]}
+          </a>
+        ),
+        sub: list[i]
+      };
+      newList.push(newObj);
+    }
+
+    treeD[0].children[0].children = newList;
+    console.log(newList);
+
+    // treeD[0].children[1].children = newList;
+  };
+
   //move from private to public
   moveFile = title => {
+    console.log(this.state.checked);
+    console.log(this.state.treeDataTwo);
     let flag = true;
     // make sure file with same name doesn't exist in public section/change later to update data instead
     for (var i in this.state.publicList) {
@@ -169,20 +201,9 @@ class App extends Component {
           fileSelection: "Public"
         });
         console.log(list);
+        this.move(title, this.state.treeDataTwo, list);
       }
-      console.log(this.state.publicList);
     }
-  };
-
-  fillBottombar = item => {
-    //map through list
-    return (
-      <li>
-        <NavLink onClick={() => this.fileSelection("Public", item)}>
-          {item}
-        </NavLink>
-      </li>
-    );
   };
 
   checkboxTrigger = checkbox => {
