@@ -16,7 +16,15 @@ class FileType extends Component{
   render(){ 
     const { show, submitFileType } = this.props
     return  (
-      <p>asdf</p>
+      <Form>
+        <Form.Group>
+        <Form.Check type="radio" label="Master" />
+        <Form.Check type="radio" label="Transactional" />
+        <Button type="submit" className="float-right" size="sm">
+          Submit
+        </Button>
+        </Form.Group>
+      </Form>
     );
   }
 }

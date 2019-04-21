@@ -118,6 +118,10 @@ class App extends Component {
     console.log("Right Click Acknowledged")
   }
 
+  handleRightClick = ({ target }) => {
+    this.setState(s => ({ target, showOverlay: !s.showOverlay }));
+  };
+
   loginBtn = () => {
     if (this.state.loginState) {
       this.setState({
@@ -463,19 +467,34 @@ class App extends Component {
                   generateNodeProps={rowInfo => ({
                     buttons: this.checkNode(rowInfo),
                     //ref: this.attachRef,
-                    onContextMenu: this.rightClick,
+                    onContextMenu: this.handleRightClick,
                     onClick: () =>  this.fileSelection(rowInfo.node.title),
                     //onContextMenu: (e) => this.fileType()
                   })}
                   theme={FileExplorerTheme}
                 />
-                <Overlay target={target} show={showOverlay} placement="bottom">
+
+                <Overlay
+                  show={this.state.showOverlay}
+                  target={this.state.target}
+                  placement="bottom"
+                  container={this}
+                  containerPadding={20}
+                >
+                  <Popover id="popover-contained" title="File Type">
+                    <FileType 
+                      submitFileType={this.submitFileType}
+                    />
+                  </Popover>
+                </Overlay>
+
+                {/*<Overlay target={target} show={showOverlay} placement="bottom">
                 {props => (
                   <Popover title="AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA">
                     AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAHHHHHHHHHHHHHHHHHHHHHHHHH
                   </Popover>
                 )}
-                </Overlay>
+                </Overlay>}
                 {/*
                 <FileType
                   show={this.state.showOverlay}
@@ -483,7 +502,7 @@ class App extends Component {
                 />
                 */}
                 <div style={{ height: 400, width: 400 }}>
-
+                
                   <SortableTree
                     treeData={this.state.treeDataTwo}
                     onChange={treeDataTwo => this.setState({ treeDataTwo })}
