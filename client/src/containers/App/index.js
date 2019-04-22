@@ -111,10 +111,10 @@ class App extends Component {
 
   rightClick = (e) => {
     e.preventDefault();
-    const {showOverlay} = this.state;
-    this.setState({
-      showOverlay: !showOverlay
-    });
+    //const {showOverlay} = this.state;
+    //this.setState({
+    //  showOverlay: !showOverlay
+    //});
     console.log("Right Click Acknowledged")
   }
 
@@ -467,6 +467,7 @@ class App extends Component {
                   generateNodeProps={rowInfo => ({
                     buttons: this.checkNode(rowInfo),
                     //ref: this.attachRef,
+                    onContextMenu: this.rightClick,
                     onContextMenu: this.handleRightClick,
                     onClick: () =>  this.fileSelection(rowInfo.node.title),
                     //onContextMenu: (e) => this.fileType()
@@ -519,8 +520,29 @@ class App extends Component {
                     canDrag={({ node }) => !node.noDragging}
                     canDrop={({ node }) => !node.noDrop}
                     canNodeHaveChildren={({ node }) => node.noCopy}
+                    generateNodeProps={rowInfo => ({
+                      buttons: this.checkNode(rowInfo),
+                      //ref: this.attachRef,
+                      onContextMenu: this.rightClick,
+                      onContextMenu: this.handleRightClick,
+                      onClick: () =>  this.fileSelection(rowInfo.node.title),
+                      //onContextMenu: (e) => this.fileType()
+                    })}
                     theme={FileExplorerTheme}
                   />
+                  <Overlay
+                  show={this.state.showOverlay}
+                  target={this.state.target}
+                  placement="bottom"
+                  container={this}
+                  containerPadding={20}
+                >
+                  <Popover id="popover-contained" title="File Type">
+                    <FileType 
+                      submitFileType={this.submitFileType}
+                    />
+                  </Popover>
+                </Overlay>
 
                 </div>
               </div>
