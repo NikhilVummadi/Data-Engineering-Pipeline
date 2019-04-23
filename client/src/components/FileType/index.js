@@ -7,23 +7,34 @@ import OverlayTrigger from 'react-bootstrap/OverlayTrigger'
 
 class FileType extends Component{
   constructor(props){
-    super(props);
+    super(props)
     this.state = {
-      type: "",
+      fileType: 'master',
+      publicFile: false,
     }
   }
 
+  handleFileType = async (e) => {
+    await this.setState({fileType: e.target.value})
+  }
+
+  handlePublic = (e) => {
+    const { publicFile } = this.state
+    this.setState({ publicFile: !publicFile})
+  }
   render(){ 
-    const { show, submitFileType } = this.props
+    const { file, submitFileType } = this.props
+    const { fileType, publicFile } = this.state
     return  (
       <Form>
-        <Form.Group>
-        <Form.Check type="radio" label="Master" />
-        <Form.Check type="radio" label="Transactional" />
-        <Button type="submit" className="float-right" size="sm">
-          Submit
-        </Button>
-        </Form.Group>
+      <h5>Select the type of file:</h5>
+      <Form.Group>
+        <Form.Check type="radio" name="fileType" value="master" label="Master" onChange={this.handleFileType} checked={fileType === 'master'}/>
+        <Form.Check type="radio" name="fileType" value="transactional" label="Transactional" onChange={this.handleFileType} checked={fileType === 'transactional'}/>
+      </Form.Group>
+      <div style={{float: "right",}}>
+        <Button onClick={() => submitFileType(file, fileType)}>Next</Button>
+      </div>
       </Form>
     );
   }
