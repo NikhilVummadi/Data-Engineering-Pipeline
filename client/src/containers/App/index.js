@@ -76,6 +76,7 @@ class App extends Component {
     
     this.state = {
       canvasTitle: "",
+      file: "",
       loginState: false,
       username: "",
       password: "",
@@ -198,7 +199,6 @@ class App extends Component {
     console.log("File Name: ", fileName)
     console.log("File Type: ", fileType)
     this.setState(s => ({ showOverlay: !s.showOverlay }));
-
     // this.setState({ dataChecks: true });
   };
 
@@ -217,7 +217,7 @@ class App extends Component {
         config
       )
       .then(function(response) {
-        console.log(response.data);
+        console.log(response);
       })
       .catch(function(error) {
         console.log(error);
@@ -225,15 +225,20 @@ class App extends Component {
   }
 
   fileSelection = async (e) => {
-    if(e.includes('.csv')){
-      this.setState({ canvasTitle: e });
-      console.log(e, " file selected");
-      let res = await axios.post(`http://127.0.0.1:5000/openFile`,  {"name": e})
-      let header = res.data[0]
-      let data = res.data[1]
-      // await this.setState({ header: header })
-      console.log("header",  header)
-      console.log("data", data)
+    console.log(e.props)
+    if(e.props != undefined)  
+    {
+      if(e.props.children.includes('.csv')){
+        this.setState({ canvasTitle: e.props.children });
+        console.log(e, " file selected");
+        let res = await axios.post(`http://127.0.0.1:5000/openFile`,  {"name": e.props.children})
+        
+        let header = res.data[0]
+        let data = res.data[1]
+        // await this.setState({ header: header })
+        console.log("header",  header)
+        console.log("data", data)
+      }
     }
     //Create these 2 states
     // labels = []
@@ -267,33 +272,20 @@ class App extends Component {
     }
   };
 
-  move = (title, tree, list) => {
-    console.log("move from private to public");
-    let treeD = tree;
-    let name = title;
-    let newList = [];
-    let newObj;
+  move = (rowInfo) => {
+    console.log(rowInfo.node.sub);
 
-    for (let i in list) {
-      newObj = {
-        title: (
-          <a
-            href="#"
-            onClick={() => {
-              this.treeClick(list[i]);
-            }}
-          >
-            {list[i]}
-          </a>
-        ),
-        sub: list[i]
-      };
-      newList.push(newObj);
-    }
+    let newList = this.state.treeDataTwo;
+    newList[0].children[0].children.push(rowInfo.node);
+    console.log(newList[0].children);
+    this.setState({
+      treeDataTwo: newList
+    })
   }
 
   //move from private to public
-  moveFile = title => {
+  moveFile = rowInfo => {
+    let title = rowInfo.node.sub;
     console.log(this.state.checked);
     console.log(this.state.treeDataTwo);
     let flag = true;
@@ -304,29 +296,29 @@ class App extends Component {
       }
     }
     console.log(this.state.publicList);
-    if (this.state.checked === true && flag) {
+    if (flag) {
       if (title !== undefined) {
         const list = [...this.state.publicList, title];
         this.setState({
-          publicList: list,
-          fileSection: "Public"
+          publicList: list
         });
+        this.move(rowInfo);
         console.log(list);
-        this.move(title, this.state.treeDataTwo, list);
       }
+      console.log(this.state.publicList);
     }
   };
 
-  // fillBottombar = item => {
-  //   //map through list
-  //   return (
-  //     <li>
-  //       <NavLink onClick={() => this.fileSelection("Public", item)}>
-  //         {item}
-  //       </NavLink>
-  //     </li>
-  //   );
-  // };
+  fillBottombar = item => {
+    //map through list
+    return (
+      <li>
+        <NavLink onClick={() => this.fileSelection("Public", item)}>
+          {item}
+        </NavLink>
+      </li>
+    );
+  };
 
   checkboxTrigger = checkbox => {
     console.log(checkbox);
@@ -395,8 +387,7 @@ class App extends Component {
     newObj[0].children[0].children = newList;
 
     this.setState({
-      treeData: newObj,
-      privateList: [...this.state.privateList, newFile]
+      treeData: newObj
     });
 
     // return list;
@@ -443,11 +434,20 @@ class App extends Component {
   };
 
   removeNode = (rowInfo) => {
+    console.log(rowInfo)
+    let newList = [];
     let { node, treeIndex, path } = rowInfo;
+    for(let i in this.state.privateList){
+      if(this.state.privateList[i] != rowInfo.node.sub){
+        newList.push(this.state.privateList[i])
+      }
+    }
+    console.log(newList)
+
     this.setState({
       treeData: removeNodeAtPath({
         treeData: this.state.treeData,
-        path: path, // You can use path from here
+        path: rowInfo.path, // You can use path from here
         getNodeKey: ({ node: TreeNode, treeIndex: number }) => {
           // console.log(number);
           return number;
@@ -456,12 +456,26 @@ class App extends Component {
         ignoreCollapsed: false
       })
     });
+    this.setState({
+      privateList: newList
+    })
   };
-
   
 
   checkNode = (rowInfo) => {
     console.log(rowInfo.treeIndex);
+    if(rowInfo.treeIndex == 0){
+      return
+    }
+    if (rowInfo.treeIndex == 1) {
+      return [
+        <div>
+          <button label="Add" onClick={event => this.addNode(rowInfo)}>
+            Add
+          </button>
+        </div>
+      ];
+    }
     if (rowInfo.treeIndex !== 0) {
       return [
         <div>
@@ -470,6 +484,9 @@ class App extends Component {
           </button>
           <button label="Add" onClick={event => this.addNode(rowInfo)}>
             Add
+          </button>
+          <button label="Move" onClick={event => this.moveFile(rowInfo)}>
+            Move
           </button>
         </div>
       ];
@@ -550,21 +567,37 @@ class App extends Component {
                   })}
                   theme={FileExplorerTheme}
                 />
-                <Overlay target={target} show={showOverlay} placement="bottom">
+                {/* {console.log("THIS IS THE TARGET", this.state.target)} */}
+                <Overlay
+                  show={this.state.showOverlay}
+                  target={this.state.target}
+                  placement="bottom"
+                  container={this}
+                  containerPadding={20}
+                >
+                  <Popover id="popover-contained" title="File Type">
+                    <FileType 
+                      submitFileType={this.submitFileType}
+                      file={this.state.file}
+                    />
+                  </Popover>
+                </Overlay>
+
+                {/*<Overlay target={target} show={showOverlay} placement="bottom">
                 {props => (
                   <Popover title="AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA">
                     AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAHHHHHHHHHHHHHHHHHHHHHHHHH
                   </Popover>
                 )}
-                </Overlay>
+                </Overlay>}
                 {/*
-                <
+                <FileType
                   show={this.state.showOverlay}
                   submitFileType={this.submitFileType}
                 />
                 */}
                 <div style={{ height: 400, width: 400 }}>
-
+                
                   <SortableTree
                     treeData={this.state.treeDataTwo}
                     onChange={treeDataTwo => this.setState({ treeDataTwo })}
