@@ -190,7 +190,7 @@ class App extends Component {
         config
       )
       .then(function(response) {
-        console.log(response);
+        console.log(response.data);
       })
       .catch(function(error) {
         console.log(error);
@@ -198,16 +198,22 @@ class App extends Component {
   }
 
   fileSelection = async (e) => {
-    console.log(e);
-    if(e.node.sub.includes('.csv')){
-      this.setState({ canvasTitle: e });
-      console.log(e, " file selected");
-      let res = await axios.post(`http://127.0.0.1:5000/openFile`,  {"name": e})
-      let header = res.data[0]
-      let data = res.data[1]
-      // await this.setState({ header: header })
-      console.log("header",  header)
-      console.log("data", data)
+    console.log(e.node.sub);
+    if(e.node.sub != undefined)
+    {
+      if(e.node.sub.includes('.csv')){
+        console.log("contain csv")
+        this.setState({ canvasTitle: e.node.sub });
+        console.log(e.node.sub, " file selected");
+         let res = await axios.post(`http://127.0.0.1:5000/openFile`,  {"name": e.node.sub})
+        let header = res.data[0]
+        let data = res.data[1]
+        // await this.setState({ header: header })
+        console.log("header",  header)
+        console.log("data", data)
+      } else{
+        console.log('no csv')
+      }
     }
     //Create these 2 states
     // labels = []
@@ -522,7 +528,7 @@ class App extends Component {
                     onClick: () =>  this.fileSelection(rowInfo),
                     //onContextMenu: (e) => this.fileType()
                   })}
-                  // theme={FileExplorerTheme}
+                  theme={FileExplorerTheme}
                 />
                 <Overlay target={target} show={showOverlay} placement="bottom">
                 {props => (
@@ -532,7 +538,7 @@ class App extends Component {
                 )}
                 </Overlay>
                 {/*
-                <FileType
+                <
                   show={this.state.showOverlay}
                   submitFileType={this.submitFileType}
                 />
