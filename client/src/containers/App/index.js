@@ -118,6 +118,31 @@ class App extends Component {
     console.log("Right Click Acknowledged")
   }
 
+  handleRightClick = async (e) => {
+    e.preventDefault();
+    // console.log("HSDF", file)
+    await this.setState({target: e.target})
+    // console.log("THIS IS TARGET", this.state.target)
+    // const { file } = target.span.includes(".csv")
+    // console.log("TESTING", Object.values(this.state.target)[1].children)
+    try{
+      if(Object.values(this.state.target)[1].children.includes(".csv")){
+        await this.setState(s => ({ showOverlay: true }));
+        await this.setState({file: Object.values(this.state.target)[1].children})
+      }
+      else{
+        await this.setState(s => ({ showOverlay: false }));
+        await this.setState({file: ""})
+      }
+    }
+    catch(e){
+      await this.setState(s => ({ showOverlay: false }));
+      await this.setState({file: ""})
+      // console.log("THIS IS THE ERROR", e)
+    }
+    // console.log(" THIS IS THE FILE", this.state.file)
+  };
+
   loginBtn = () => {
     if (this.state.loginState) {
       this.setState({
@@ -172,6 +197,8 @@ class App extends Component {
   submitFileType = (fileName, fileType) => {
     console.log("File Name: ", fileName)
     console.log("File Type: ", fileType)
+    this.setState(s => ({ showOverlay: !s.showOverlay }));
+
     // this.setState({ dataChecks: true });
   };
 
@@ -198,22 +225,15 @@ class App extends Component {
   }
 
   fileSelection = async (e) => {
-    console.log(e.node.sub);
-    if(e.node.sub != undefined)
-    {
-      if(e.node.sub.includes('.csv')){
-        console.log("contain csv")
-        this.setState({ canvasTitle: e.node.sub });
-        console.log(e.node.sub, " file selected");
-         let res = await axios.post(`http://127.0.0.1:5000/openFile`,  {"name": e.node.sub})
-        let header = res.data[0]
-        let data = res.data[1]
-        // await this.setState({ header: header })
-        console.log("header",  header)
-        console.log("data", data)
-      } else{
-        console.log('no csv')
-      }
+    if(e.includes('.csv')){
+      this.setState({ canvasTitle: e });
+      console.log(e, " file selected");
+      let res = await axios.post(`http://127.0.0.1:5000/openFile`,  {"name": e})
+      let header = res.data[0]
+      let data = res.data[1]
+      // await this.setState({ header: header })
+      console.log("header",  header)
+      console.log("data", data)
     }
     //Create these 2 states
     // labels = []
@@ -524,8 +544,8 @@ class App extends Component {
                   generateNodeProps={rowInfo => ({
                     buttons: this.checkNode(rowInfo),
                     //ref: this.attachRef,
-                    onContextMenu: this.rightClick,
-                    onClick: () =>  this.fileSelection(rowInfo),
+                    onContextMenu: this.handleRightClick,
+                    onClick: () =>  this.fileSelection(rowInfo.node.title),
                     //onContextMenu: (e) => this.fileType()
                   })}
                   theme={FileExplorerTheme}
