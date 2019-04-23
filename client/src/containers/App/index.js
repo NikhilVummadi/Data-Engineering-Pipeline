@@ -76,6 +76,7 @@ class App extends Component {
     
     this.state = {
       canvasTitle: "",
+      file: "",
       loginState: false,
       username: "",
       password: "",
@@ -118,8 +119,29 @@ class App extends Component {
     console.log("Right Click Acknowledged")
   }
 
-  handleRightClick = ({ target }) => {
-    this.setState(s => ({ target, showOverlay: !s.showOverlay }));
+  handleRightClick = async (e) => {
+    e.preventDefault();
+    // console.log("HSDF", file)
+    await this.setState({target: e.target})
+    // console.log("THIS IS TARGET", this.state.target)
+    // const { file } = target.span.includes(".csv")
+    // console.log("TESTING", Object.values(this.state.target)[1].children)
+    try{
+      if(Object.values(this.state.target)[1].children.includes(".csv")){
+        await this.setState(s => ({ showOverlay: true }));
+        await this.setState({file: Object.values(this.state.target)[1].children})
+      }
+      else{
+        await this.setState(s => ({ showOverlay: false }));
+        await this.setState({file: ""})
+      }
+    }
+    catch(e){
+      await this.setState(s => ({ showOverlay: false }));
+      await this.setState({file: ""})
+      // console.log("THIS IS THE ERROR", e)
+    }
+    // console.log(" THIS IS THE FILE", this.state.file)
   };
 
   loginBtn = () => {
@@ -176,6 +198,7 @@ class App extends Component {
   submitFileType = (fileName, fileType) => {
     console.log("File Name: ", fileName)
     console.log("File Type: ", fileType)
+    this.setState(s => ({ showOverlay: !s.showOverlay }));
     // this.setState({ dataChecks: true });
   };
 
@@ -473,7 +496,7 @@ class App extends Component {
                   })}
                   theme={FileExplorerTheme}
                 />
-
+                {/* {console.log("THIS IS THE TARGET", this.state.target)} */}
                 <Overlay
                   show={this.state.showOverlay}
                   target={this.state.target}
@@ -484,6 +507,7 @@ class App extends Component {
                   <Popover id="popover-contained" title="File Type">
                     <FileType 
                       submitFileType={this.submitFileType}
+                      file={this.state.file}
                     />
                   </Popover>
                 </Overlay>
