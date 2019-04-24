@@ -99,7 +99,7 @@ class App extends Component {
       treeDataTwo: [
         {
           title: "Public",
-          children: [{ title: "Folder" }]
+          children: [{ title: "Folder", children: [] }]
         }
       ]
     };
@@ -225,15 +225,20 @@ class App extends Component {
   }
 
   fileSelection = async (e) => {
-    if(e.includes('.csv')){
-      this.setState({ canvasTitle: e });
-      console.log(e, " file selected");
-      let res = await axios.post(`http://127.0.0.1:5000/openFile`,  {"name": e})
-      let header = res.data[0]
-      let data = res.data[1]
-      // await this.setState({ header: header })
-      console.log("header",  header)
-      console.log("data", data)
+    console.log(e.props)
+    if(e.props != undefined)  
+    {
+      if(e.props.children.includes('.csv')){
+        this.setState({ canvasTitle: e.props.children });
+        console.log(e, " file selected");
+        let res = await axios.post(`http://127.0.0.1:5000/openFile`,  {"name": e.props.children})
+        
+        let header = res.data[0]
+        let data = res.data[1]
+        // await this.setState({ header: header })
+        console.log("header",  header)
+        console.log("data", data)
+      }
     }
     //Create these 2 states
     // labels = []
@@ -267,8 +272,22 @@ class App extends Component {
     }
   };
 
+  move = (rowInfo) => {
+    console.log(rowInfo.node.sub);
+
+    let newList = this.state.treeDataTwo;
+    newList[0].children[0].children.push(rowInfo.node);
+    console.log(newList[0].children);
+    this.setState({
+      treeDataTwo: newList
+    })
+  }
+
   //move from private to public
-  moveFile = title => {
+  moveFile = rowInfo => {
+    let title = rowInfo.node.sub;
+    console.log(this.state.checked);
+    console.log(this.state.treeDataTwo);
     let flag = true;
     // make sure file with same name doesn't exist in public section/change later to update data instead
     for (var i in this.state.publicList) {
@@ -277,13 +296,13 @@ class App extends Component {
       }
     }
     console.log(this.state.publicList);
-    if (this.state.checked === true && flag) {
+    if (flag) {
       if (title !== undefined) {
         const list = [...this.state.publicList, title];
         this.setState({
-          publicList: list,
-          fileSelection: "Public"
+          publicList: list
         });
+        this.move(rowInfo);
         console.log(list);
       }
       console.log(this.state.publicList);
@@ -314,6 +333,15 @@ class App extends Component {
     }
   };
 
+  treeClick = name => {
+    console.log(name);
+
+    this.setState({
+      canvasTitle: name,
+      fileSection: "Private"
+    });
+  };
+
   onToggle(node, toggled){
     if(this.state.cursor){this.state.cursor.active = false;}
     node.active = true;
@@ -331,10 +359,27 @@ class App extends Component {
     let obj;
     let list = [...this.state.privateList, newFile];
     let newList = [];
+    let name = newFile;
+    let number = 0;
+
     console.log(newFile);
+    console.log(tree);
 
     list.map(item => {
-      obj = { title: item };
+      obj = {
+        title: (
+          <a
+            href="#"
+            onClick={() => {
+              this.treeClick(item);
+            }}
+          >
+            {item}
+          </a>
+        ),
+        sub: item
+      };
+
       newList.push(obj);
       console.log(obj);
     });
@@ -389,11 +434,20 @@ class App extends Component {
   };
 
   removeNode = (rowInfo) => {
+    console.log(rowInfo)
+    let newList = [];
     let { node, treeIndex, path } = rowInfo;
+    for(let i in this.state.privateList){
+      if(this.state.privateList[i] != rowInfo.node.sub){
+        newList.push(this.state.privateList[i])
+      }
+    }
+    console.log(newList)
+
     this.setState({
       treeData: removeNodeAtPath({
         treeData: this.state.treeData,
-        path: path, // You can use path from here
+        path: rowInfo.path, // You can use path from here
         getNodeKey: ({ node: TreeNode, treeIndex: number }) => {
           // console.log(number);
           return number;
@@ -402,12 +456,26 @@ class App extends Component {
         ignoreCollapsed: false
       })
     });
+    this.setState({
+      privateList: newList
+    })
   };
-
   
 
   checkNode = (rowInfo) => {
     console.log(rowInfo.treeIndex);
+    if(rowInfo.treeIndex == 0){
+      return
+    }
+    if (rowInfo.treeIndex == 1) {
+      return [
+        <div>
+          <button label="Add" onClick={event => this.addNode(rowInfo)}>
+            Add
+          </button>
+        </div>
+      ];
+    }
     if (rowInfo.treeIndex !== 0) {
       return [
         <div>
@@ -416,6 +484,9 @@ class App extends Component {
           </button>
           <button label="Add" onClick={event => this.addNode(rowInfo)}>
             Add
+          </button>
+          <button label="Move" onClick={event => this.moveFile(rowInfo)}>
+            Move
           </button>
         </div>
       ];
