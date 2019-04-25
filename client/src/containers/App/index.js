@@ -235,8 +235,9 @@ class App extends Component {
         
         let header = res.data[0]
         let data = res.data[1]
-        // await this.setState({ header: header })
-        console.log("header",  header)
+        await this.setState({ header: header })
+        await this.setState({ data: data })
+        console.log("header",  this.state.header)
         console.log("data", data)
       }
     }
@@ -652,6 +653,8 @@ class App extends Component {
             >
               <Canvas
                 title={this.state.canvasTitle}
+                header={this.state.header}
+                data={this.state.data}
                 fileSection={this.state.fileSection}
                 next={this.nextCanvas}
                 moveFile={this.moveFile}
