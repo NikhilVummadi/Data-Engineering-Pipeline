@@ -200,6 +200,7 @@ class App extends Component {
     console.log("File Type: ", fileType)
     this.setState(s => ({ showOverlay: !s.showOverlay }));
     // this.setState({ dataChecks: true });
+    //axios.post(`http://127.0.0.1:5000/changeFileType`,  {"name": fileName, "type": fileType})
   };
 
   componentDidMount() {
