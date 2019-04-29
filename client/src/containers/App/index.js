@@ -11,10 +11,14 @@ import { Overlay, Popover, OverlayTrigger } from 'react-bootstrap';
 import Tooltip from 'react-bootstrap/Tooltip';
 import axios from "axios";
 import "react-sortable-tree/style.css"; // This only needs to be imported once in your app
+import Rename from "../../components/renameFile"
 import {
   getNodeAtPath,
   addNodeUnderParent,
-  removeNodeAtPath
+  removeNodeAtPath,
+  insertNode,
+  map,
+  walk
 } from "react-sortable-tree";
 
 // import Test from "../../components/MyFiles/example/app";
@@ -88,12 +92,17 @@ class App extends Component {
       header: [],
       data: [],
       showOverlay: false,
+      rename: false,
+      row: '',
+      addState: false,
+      newName: '',
       //show: false,
       checked: false,
+      folderCount: 1,
       treeData: [
         {
           title: "Private",
-          children: [{ title: "Folder", children: [] }]
+          children: []
         }
       ],
       treeDataTwo: [
@@ -232,14 +241,13 @@ class App extends Component {
       if(e.props.children.includes('.csv')){
         this.setState({ canvasTitle: e.props.children });
         console.log(e, " file selected");
-        let res = await axios.post(`http://127.0.0.1:5000/openFile`,  {"name": e.props.children})
-        
-        let header = res.data[0]
-        let data = res.data[1]
-        await this.setState({ header: header })
-        await this.setState({ data: data })
-        console.log("header",  this.state.header)
-        console.log("data", data)
+        let res = await axios.post(`http://127.0.0.1:5000/sendFile`,  {"fileName": e.props.children})
+        console.log("TREE DATA: ", res)
+        // let header = res.data[0]
+        // let data = res.data[1]
+        // await this.setState({ header: header })
+        // console.log("header",  header)
+        // console.log("data", data)
       }
     }
     //Create these 2 states
@@ -357,39 +365,67 @@ class App extends Component {
 
 
   createNewTree = (tree, newFile) => {
-    let newObj = tree;
-    let obj;
-    let list = [...this.state.privateList, newFile];
-    let newList = [];
-    let name = newFile;
-    let number = 0;
+    // let newObj = tree;
+    // let obj;
+    // let list = [...this.state.privateList, newFile];
+    // let newList;
+    // let name = newFile;
+    // let number = 0;
 
-    console.log(newFile);
-    console.log(tree);
+    // console.log(newFile);
+    // console.log(tree);
 
-    list.map(item => {
-      obj = {
-        title: (
-          <a
-            href="#"
-            onClick={() => {
-              this.treeClick(item);
-            }}
-          >
-            {item}
-          </a>
-        ),
-        sub: item
-      };
+    // list.map(item => {
+    //   obj = {
+    //     title: (
+    //       <a
+    //         href="#"
+    //         onClick={() => {
+    //           this.treeClick(item);
+    //         }}
+    //       >
+    //         {item}
+    //       </a>
+    //     ),
+    //     sub: item,
+    //     type: 'file'
+    //   };
 
-      newList.push(obj);
-      console.log(obj);
+    //   // newList.push(obj);
+    //   console.log(obj);
+    //   newObj[0].children.push(obj);  
+    // });
+    // console.log(list);
+    
+    let rowInfo = tree;
+    console.log(tree)
+    let NEW_NODE = {title: <a
+              href="#"
+              onClick={() => {
+                this.treeClick(newFile);
+              }}
+            >{newFile}</a>
+            , type: 'file'};
+    let {node, treeIndex, path} = rowInfo;
+    let parentNode = getNodeAtPath({
+        treeData: this.state.treeData,
+        path : path,
+        getNodeKey: ({ treeIndex }) =>  treeIndex,
+        ignoreCollapsed : true
     });
-    console.log(list);
-    newObj[0].children[0].children = newList;
+    
+    let newTree = insertNode({
+            treeData: this.state.treeData,
+            depth: 1,
+            minimumTreeIndex: 1,
+            newNode: NEW_NODE,
+            parentKey: null,
+            getNodeKey: ({ treeIndex }) =>  treeIndex,
+            expandParent: false
+     });
 
     this.setState({
-      treeData: newObj
+      treeData: newTree.treeData
     });
 
     // return list;
@@ -409,34 +445,58 @@ class App extends Component {
 
   addNode = (rowInfo) => {
     console.log(rowInfo);
-    let NEW_NODE = { title: "" };
-    let { node, treeIndex, path } = rowInfo;
+    console.log(rowInfo.path.length)
+    let currDepth = rowInfo.path.length+1;
+    let NEW_NODE = {title: 'title', type: 'folder'};
+    let {node, treeIndex, path} = rowInfo;
     path.pop();
     let parentNode = getNodeAtPath({
-      treeData: this.state.treeData,
-      path: path,
-      getNodeKey: ({ treeIndex }) => treeIndex,
-      ignoreCollapsed: true
+        treeData: this.state.treeData,
+        path : rowInfo.path,
+        getNodeKey: ({ treeIndex }) =>  treeIndex,
+        ignoreCollapsed : true
     });
     let getNodeKey = ({ node: object, treeIndex: number }) => {
-      return number;
+        return number;
     };
     let parentKey = getNodeKey(parentNode);
-    if (parentKey == -1) {
-      parentKey = null;
+    if(parentKey == -1) {
+        parentKey = null;
     }
-    let newTree = addNodeUnderParent({
-      treeData: this.state.treeData,
-      newNode: NEW_NODE,
-      expandParent: true,
-      parentKey: parentKey,
-      getNodeKey: ({ treeIndex }) => treeIndex
-    });
-    this.setState({ treeData: newTree.treeData });
+    
+    let newTree = insertNode({
+            treeData: this.state.treeData,
+            depth: 3,
+            minimumTreeIndex: rowInfo.treeIndex+1,
+            newNode: NEW_NODE,
+            parentKey: parentKey,
+            getNodeKey: ({ treeIndex }) =>  treeIndex,
+            expandParent: false
+     });
+
+     this.setState({treeData: newTree.treeData, folderCount: this.state.folderCount+1});
   };
+
+  addBtn = rowInfo => {
+    console.log('add button')
+    // this.setState({
+    //   newName: rowInfo
+    // })
+    if (this.state.addState) {
+      this.setState({
+        addState: false
+      });
+    } else {
+      this.setState({
+        addState: true
+      });
+    }
+    console.log(this.state.addState)
+  }
 
   removeNode = (rowInfo) => {
     console.log(rowInfo)
+
     let newList = [];
     let { node, treeIndex, path } = rowInfo;
     for(let i in this.state.privateList){
@@ -458,34 +518,93 @@ class App extends Component {
         ignoreCollapsed: false
       })
     });
-    this.setState({
-      privateList: newList
-    })
+    if(rowInfo.node.type === 'folder'){
+      this.setState({
+        privateList: newList,
+        folderCount: this.state.folderCount-1
+      })
+    } else {
+      this.setState({
+        privateList: newList
+      })
+    }
   };
   
+  rename = (rowInfo, newName) => {
+    if(rowInfo.node.type == 'file'){
+      console.log(rowInfo.node.title)
+      rowInfo.node.title = <a
+      href="#"
+      onClick={() => {
+        this.treeClick(newName);
+      }}
+    >{newName}</a>
+      
+    } else{
+      rowInfo.node.title = newName
+    }
+    
+
+
+    
+    
+    
+
+    // Some component popup with input
+    // change name of folder/file to value of input text
+  }
+
+  renameFile = (rowInfo) => {
+    if (this.state.rename) {
+      this.setState({
+        rename: false
+      });
+    } else {
+      this.setState({
+        rename: true
+      });
+    }
+    this.setState({
+      row: rowInfo
+    })
+    // console.log(this.state.upState);
+  };
 
   checkNode = (rowInfo) => {
-    console.log(rowInfo.treeIndex);
+    console.log(rowInfo);
     if(rowInfo.treeIndex == 0){
-      return
-    }
-    if (rowInfo.treeIndex == 1) {
       return [
         <div>
           <button label="Add" onClick={event => this.addNode(rowInfo)}>
             Add
           </button>
-        </div>
-      ];
+          </div>
+      ]
     }
-    if (rowInfo.treeIndex !== 0) {
+    if (rowInfo.node.type === 'folder') {
+      
+        return [<div>
+            <button label="Add" onClick={event => this.addNode(rowInfo)}>
+              Add
+            </button>
+            <button label="Delete" onClick={event => this.removeNode(rowInfo)}>
+              Remove
+            </button>
+            <button label="Rename" onClick={event => this.renameFile(rowInfo)}>
+              Rename
+            </button>
+        </div>]
+      // }
+      
+    }
+    if (rowInfo.node.type === 'file') {
       return [
         <div>
           <button label="Delete" onClick={event => this.removeNode(rowInfo)}>
             Remove
           </button>
-          <button label="Add" onClick={event => this.addNode(rowInfo)}>
-            Add
+          <button label="Rename" onClick={event => this.renameFile(rowInfo)}>
+            Rename
           </button>
           <button label="Move" onClick={event => this.moveFile(rowInfo)}>
             Move
@@ -532,6 +651,29 @@ class App extends Component {
       );
     }
 
+    let file;
+    if (this.state.addState === true){
+      file = (
+        <MyFiles
+          addBtn={this.addBtn}
+          rowInfo={this.state.newName}
+          treeData={this.state.treeData}
+          addNode={this.addNode}
+        />
+      )
+    }
+
+    let rename;
+    if (this.state.rename === true) {
+      rename = (
+        <div>
+          <Rename renameFile={this.renameFile} rename={this.rename} rowInfo={this.state.row}
+          />
+        </div>
+      );
+    }
+
+
     return (
       <div style={{height: '100vh', backgroundImage: `url(${CanvasBanner})`, backgroundPosition: 'center', backgroundSize: 'cover', backgroundRepeat: 'no-repeat'}}>
         <NavigationBar
@@ -567,6 +709,7 @@ class App extends Component {
                     onContextMenu: this.handleRightClick,
                     onClick: () =>  this.fileSelection(rowInfo.node.title),
                     //onContextMenu: (e) => this.fileType()
+                    
                   })}
                   theme={FileExplorerTheme}
                 />
@@ -644,8 +787,10 @@ class App extends Component {
                 </div>
               </div>
             </div>
+            {file}
             {login}
             {upload}
+            {rename}
             <div
               style={{
                 flex: "9",
@@ -660,6 +805,7 @@ class App extends Component {
                 next={this.nextCanvas}
                 moveFile={this.moveFile}
                 checkboxTrigger={this.checkboxTrigger}
+                header={this.state.header}
               />
             </div>
           </div>

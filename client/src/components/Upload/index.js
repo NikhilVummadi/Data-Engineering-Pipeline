@@ -10,6 +10,11 @@ import "./Upload.css";
 
 class Upload extends Component {
 
+  
+  constructor(props){
+    super(props)
+  }
+
   componentWillMount(){
     document.addEventListener('mousedown', this.handleClick, false);
   }
