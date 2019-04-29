@@ -184,12 +184,13 @@ class App extends Component {
     if(e.includes('.csv')){
       this.setState({ canvasTitle: e });
       console.log(e, " file selected");
-      let res = await axios.post(`http://127.0.0.1:5000/openFile`,  {"name": e})
-      let header = res.data[0]
-      let data = res.data[1]
+      let res = await axios.post(`http://127.0.0.1:5000/sendFile`,  {"fileName": e})
+      console.log("FILE DATA: ", res)
+      // let header = res.data[0]
+      // let data = res.data[1]
       // await this.setState({ header: header })
-      console.log("header",  header)
-      console.log("data", data)
+      // console.log("header",  header)
+      // console.log("data", data)
     }
     //Create these 2 states
     // labels = []

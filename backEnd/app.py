@@ -6,9 +6,10 @@ from flask import jsonify
 import csv
 from flask import Flask, render_template, request
 from flask_pymongo import PyMongo
+from flask_cors import CORS
 
 app = Flask(__name__)
-
+CORS(app)
 
 @app.route('/')
 def hello():
