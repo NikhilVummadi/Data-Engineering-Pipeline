@@ -240,13 +240,13 @@ class App extends Component {
       if(e.props.children.includes('.csv')){
         this.setState({ canvasTitle: e.props.children });
         console.log(e, " file selected");
-        let res = await axios.post(`http://127.0.0.1:5000/openFile`,  {"name": e.props.children})
-        
-        let header = res.data[0]
-        let data = res.data[1]
+        let res = await axios.post(`http://127.0.0.1:5000/sendFile`,  {"fileName": e.props.children})
+        console.log("TREE DATA: ", res)
+        // let header = res.data[0]
+        // let data = res.data[1]
         // await this.setState({ header: header })
-        console.log("header",  header)
-        console.log("data", data)
+        // console.log("header",  header)
+        // console.log("data", data)
       }
     }
     //Create these 2 states
