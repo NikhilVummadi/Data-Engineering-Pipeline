@@ -225,11 +225,12 @@ class App extends Component {
   }
 
   fileSelection = async (e) => {
+    console.log("THIS IS THE FILE SELECTION", e)
     if(e.includes('.csv')){
       this.setState({ canvasTitle: e });
       console.log(e, " file selected");
       let res = await axios.post(`http://127.0.0.1:5000/openFile`,  {"name": e})
-      let header = res.data[0]
+      const { header } = res.data[0]
       let data = res.data[1]
       // await this.setState({ header: header })
       console.log("header",  header)
@@ -458,7 +459,7 @@ class App extends Component {
         </div>
       );
     }
-
+    // console.log("THIS IS HEADER BEFORE RETURN", this.state.header)
     return (
       <div style={{height: '100vh', backgroundImage: `url(${CanvasBanner})`, backgroundPosition: 'center', backgroundSize: 'cover', backgroundRepeat: 'no-repeat'}}>
         <NavigationBar
@@ -563,6 +564,7 @@ class App extends Component {
                 next={this.nextCanvas}
                 moveFile={this.moveFile}
                 checkboxTrigger={this.checkboxTrigger}
+                header={this.state.header}
               />
             </div>
           </div>
