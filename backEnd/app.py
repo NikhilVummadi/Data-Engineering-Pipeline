@@ -10,10 +10,6 @@ from flask_cors import CORS
 
 app = Flask(__name__)
 CORS(app)
-<<<<<<< HEAD
-=======
-
->>>>>>> dc67960944a7f37517053ee5d11cc7dd2de0722e
 
 @app.route('/')
 def hello():
