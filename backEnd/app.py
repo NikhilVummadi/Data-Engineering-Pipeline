@@ -125,7 +125,11 @@ def addFolder():
     parent = hold['parentName']
     users = mongo1.db.User
     files = mongo1.db.fs.files
-    files.insert({'Name': folder,'type': 'folder', 'parent': parent})
+    poop = []
+    files.insert({'filename': folder,'type': 'folder', 'parent': parent})
+    for things in files.find():
+        if things['filename'] == folder:
+            poop = things['_id']
     for q in users.find():
         if q['username'] == 'abdulhabib':
             foo = q['_id']
@@ -133,7 +137,7 @@ def addFolder():
             '_id': foo
             },{
             '$push':{
-            'folders': folder
+            'folders': poop
             }
             },upsert=False)
     return "Added Folder"
@@ -143,11 +147,13 @@ def listPrivateFiles():
     users = mongo1.db.User
     files = mongo1.db.fs.files
     a = {}
+    tempVar = {"name":"private","children":[]}
     for q in users.find():
         if q['username'] == 'abdulhabib':
             for things in q['folders']:
                 for stuff in files.find():
                     if stuff['_id']== things:
+                        a[stuff['filename']]=[]
                         if stuff['parent'] in a:
                             a[stuff['parent']].append(stuff['filename'])
                         else:
@@ -187,6 +193,24 @@ def listPublicFiles():
                         else:
                             a[stuff['parent']]=[stuff['filename']]
     return jsonify(a)
+
+@app.route('/moveFiles', methods = ['POST'])
+def moveFiles():
+    hold = request.get_json()
+    tempFile = hold['folderName']
+    parent = hold['parentName']
+    users = mongo1.db.User
+    files = mongo1.db.fs.files
+    for thing in files.find():
+        if thing['filename']==tempFile:
+            mongo1.db.fs.files.update({
+            '_id': thing['_id']
+            },{
+            '$set':{
+            'parent': parent
+            }
+            },upsert=False)
+    return "Moved!"
 
 if __name__ == '__main__':
     app.run(debug=True)

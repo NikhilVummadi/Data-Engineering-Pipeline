@@ -1,66 +1,73 @@
+//Login component
 import React, { Component } from "react";
-import Private from "./Private";
-// import Public from "./Public";
-import SortableTree from "react-sortable-tree";
-import "react-sortable-tree/style.css";
-import FileExplorerTheme from 'react-sortable-tree-theme-file-explorer';
+import Modal from "react-bootstrap/Modal";
+import Form from "react-bootstrap/Form";
+import { Button } from "react-bootstrap";
 
 
-export default class Tree extends Component {
-  constructor(props) {
-    super(props);
+//import { Modal, ModalDialog, modalHeader, ModalFooter, ModalTitle, ModalBody } from 'react-bootstrap/Modal'
 
-    this.state = {
-      checkUpdate: false,
-      prevArray: [],
-      upState: true,
-      treeData: [
-        {
-          title: "Source",
-          children: [{ title: "Private" }, { title: "Public" }]
-        }
-      ]
-    };
+class MyFiles extends Component {
+
+  componentWillMount(){
+    document.addEventListener('mousedown', this.handleClick, false);
   }
 
-  checkArrayUpdate = () => {
-    //check for update button click through prop
-    console.log(this.props.upState);
-  };
+  componentWillUnmount(){
+    document.removeEventListener('mousedown', this.handleClick, false);
+  }
 
-  changeTree = () => {
-    this.setState({
-      treeData: [{ title: "title", children: [] }]
-    });
-  };
+  handleClick = (e) => {
+    if(this.node.contains(e.target)){
+      return;
+    }
+    this.handleClickOutside();
+  }
+
+  handleClickOutside = () => {
+    this.props.addBtn();
+  }
 
   render() {
     console.log(this.props);
-    //set state with item from list
-    this.state.treeData[0].children[0].children = this.takeTwo(
-      this.props.privateList
-    );
-
     return (
-      <div>
-        <h4>Files</h4>
-        <div style={{ height: '80vh', width: '20vw', fontSize: '15px' }}>
-            <SortableTree
-              treeData={this.state.treeData}
-              onChange={treeData => this.setState({ treeData })}
-              getNodeKey={({ node }) => node._id}
-              generateNodeProps={
-                (onclick = node => {
-                  if (node.treeIndex === 2) console.log(node.node.title);
-                })
-                (oncontextmenu = node => {
-                  console.log("RIGHT CLICK");
-                })
-              }
-              theme={FileExplorerTheme}
-            />
-        </div>
+      <div
+        className="background"
+        style={{ position: "absolute", left: "35vw" }}
+        ref={node => this.node = node}
+      >
+        <Modal.Dialog>
+          <Modal.Header closeButton onClick={this.props.addBtn}>
+            <Modal.Title>Add</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <Form>
+              <Form.Group controlId="formBasicEmail">
+                <Form.Label style={{ width: "10rem" }}>
+                  Rename
+                </Form.Label>
+                <Form.Control type="email" placeholder="Enter new name" inputRef={ref => this.input = ref}
+                />
+              </Form.Group>
+
+              
+
+              <div style={{ float: "right" }}>
+                
+                
+                <Button variant="primary" type="submit" onClick={this.props.addNode(this.props.rowInfo, 'vale')}>
+                  Submit
+                </Button>
+              </div>
+            </Form>
+          </Modal.Body>
+          <Modal.Footer>
+            
+          </Modal.Footer>
+        </Modal.Dialog>
       </div>
     );
   }
 }
+
+export default MyFiles;

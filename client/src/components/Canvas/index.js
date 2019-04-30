@@ -28,6 +28,7 @@ class Canvas extends Component {
     console.log(this.props);
     const { title, header, data } = this.props;
     // const { fileType, publicFile } = this.state;
+    // console.log("THIS IS THE HEADERS", header)
     return (
       <div className="container">
         {title ? (

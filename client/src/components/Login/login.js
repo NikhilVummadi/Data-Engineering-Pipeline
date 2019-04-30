@@ -8,12 +8,33 @@ import "./login.css";
 //import { Modal, ModalDialog, modalHeader, ModalFooter, ModalTitle, ModalBody } from 'react-bootstrap/Modal'
 
 class Login extends Component {
+
+  componentWillMount(){
+    document.addEventListener('mousedown', this.handleClick, false);
+  }
+
+  componentWillUnmount(){
+    document.removeEventListener('mousedown', this.handleClick, false);
+  }
+
+  handleClick = (e) => {
+    if(this.node.contains(e.target)){
+      return;
+    }
+    this.handleClickOutside();
+  }
+
+  handleClickOutside = () => {
+    this.props.loginBtn();
+  }
+
   render() {
     console.log(this.props);
     return (
       <div
         className="background"
         style={{ position: "absolute", left: "35vw" }}
+        ref={node => this.node = node}
       >
         <Modal.Dialog>
           <Modal.Header closeButton onClick={this.props.loginBtn}>
