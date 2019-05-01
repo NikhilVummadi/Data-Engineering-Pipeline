@@ -231,6 +231,25 @@ class App extends Component {
       .catch(function(error) {
         console.log(error);
       });
+
+      var config = {
+        headers: {
+          "Content-Type": "application/json",
+          "Access-Control-Allow-Origin": "*"
+        }
+      };
+      axios
+        .post(
+          "http://127.0.0.1:5000/listFiles",
+          { label: "Test", text: "Test" },
+          config
+        )
+        .then(function(response) {
+          console.log(response);
+        })
+        .catch(function(error) {
+          console.log(error);
+        });
   }
 
   fileSelection = async (e) => {
