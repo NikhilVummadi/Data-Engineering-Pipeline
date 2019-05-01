@@ -224,12 +224,11 @@ class App extends Component {
     // this.setState({ dataChecks: true });
   };
 
-  readTree = (data, init, count) => {
+  readTree = (data) => {
     let treeData = data;
     let arrayKeys = Object.keys(treeData);
     let arrayValues = Object.values(treeData);
     let arrayObj = []
-    let temp = 'private'
 
     console.log(arrayKeys)
     console.log(arrayValues)
@@ -297,6 +296,30 @@ class App extends Component {
 
   }
 
+  readPublic = (data) => {
+    console.log(data);
+    let dataArray = data.public;
+    let root = { title: 'public', children: []}
+    let obj;
+    dataArray.map(item => {
+      obj ={
+        title: <a
+        href="#"
+        onClick={() => {
+          this.treeClick(item);
+        }}
+      >{item}</a>,
+        type: 'file'
+      }
+      root.children.push(obj);
+    });
+      
+    
+    this.setState({
+      treeDataTwo: [root]
+    })
+  }
+
   componentDidMount() {
     // this.setState({ nextCanvas: false });
     var self = this;
@@ -305,7 +328,8 @@ class App extends Component {
         "Content-Type": "application/json",
         "Access-Control-Allow-Origin": "*"
       }
-    };
+    }; 
+    // get private to turn to tree
     axios
       .get(
         "http://127.0.0.1:5000/listPrivateFiles",
@@ -318,21 +342,28 @@ class App extends Component {
         let counter = 0;
         
         //callback function
-        self.readTree(data, 'private', counter);
-
-         
-
+        self.readTree(data);
       })
       .catch(function(error) {
         console.log(error);
       });
 
-      axios({
-        method: 'post',
-        url: 'http://127.0.0.1:5000/upload',
-        data: {
-          fileName: 'fileName'
-        }
+      // get public
+      axios
+      .get(
+        "http://127.0.0.1:5000/listPublicFiles",
+        { label: "Test", text: "Test" },
+        config
+      )
+      .then(function(response) {
+        console.log(response);
+        let data = response.data;
+        
+        //callback function
+        self.readPublic(data);
+      })
+      .catch(function(error) {
+        console.log(error);
       });
   }
 
@@ -452,8 +483,7 @@ class App extends Component {
 
 
   createNewTree = (tree, newFile) => {
-    
-    
+
     let rowInfo = tree;
     console.log(tree)
     let NEW_NODE = {title: <a
@@ -561,16 +591,14 @@ class App extends Component {
 
      var config = {
       headers: {
-        "Content-Type": "multipart/form-data",
+        "Content-Type": "application/json",
         "Access-Control-Allow-Origin": "*"
       }
     };
-    var formData = new FormData();
-    formData.append('fileName', 'title');
     axios
       .post(
         "http://127.0.0.1:5000/sendFile",
-        formData,
+        {fileName: 'title'},
         config
       )
       .then(function(response) {
