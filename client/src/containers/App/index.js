@@ -103,12 +103,13 @@ class App extends Component {
         {
           title: "Private",
           children: []
+          
         }
       ],
       treeDataTwo: [
         {
           title: "Public",
-          children: [{ title: "Folder", children: [] }]
+          children: []
         }
       ]
     };
@@ -117,6 +118,18 @@ class App extends Component {
     this.onToggle = this.onToggle.bind(this);
     this.loginSubmit = this.loginSubmit.bind(this);
     this.rightClick=this.rightClick.bind(this);
+  }
+
+  //button style
+  getStyle = () => {
+    return {
+      background: 'white',
+      margin: '4px',
+      borderRadius: '20%',
+      outline: 'none',
+      height: '1.5rem',
+      fontSize: '10px'
+    }
   }
 
   rightClick = (e) => {
@@ -211,8 +224,82 @@ class App extends Component {
     // this.setState({ dataChecks: true });
   };
 
+  readTree = (data, init, count) => {
+    let treeData = data;
+    let arrayKeys = Object.keys(treeData);
+    let arrayValues = Object.values(treeData);
+    let arrayObj = []
+    let temp = 'private'
+
+    console.log(arrayKeys)
+    console.log(arrayValues)
+
+    // create array of objects with parents, children, and title
+    for(let i in arrayKeys){
+      let obj;
+      for(let j in arrayValues){
+        for(let k in arrayValues[j]){
+          if(arrayKeys[i] === arrayValues[j][k]){
+            obj = {
+              title: arrayValues[i][k]===undefined ? 'temp' : arrayValues[i][k],
+              parent: arrayKeys[i],
+              children: []
+            }
+            console.log(obj)
+            arrayObj.push(obj)
+          }
+        }
+      }
+
+      if(arrayKeys[i] === 'private'){
+        console.log(arrayValues[i])
+        console.log(arrayKeys[i])
+        for( let j in arrayValues[i]){
+          obj = {
+            title: arrayValues[i][j] ,
+            parent: arrayKeys[i],
+            children: []
+          }
+          arrayObj.push(obj)
+        }
+      } 
+    }
+
+    
+    console.log(arrayObj)
+
+    let rootNode = {
+      title: 'private',
+      children: []
+    }
+    // loop through arrayObj taking each node out of list and checking with existing
+    while(arrayObj.length > 0){
+      let current = arrayObj.shift();
+      for( let i in arrayObj){
+        console.log(current)
+        if(arrayObj[i].title === current.parent){
+          arrayObj[i].children.push(current)
+          console.log(arrayObj)
+        }
+      }
+      if (current.parent === 'private'){
+        console.log(current)
+        rootNode.children.push(current)
+      }
+    }
+
+    console.log(rootNode)
+
+    this.setState({
+      treeData: [rootNode]
+    })
+
+
+  }
+
   componentDidMount() {
     // this.setState({ nextCanvas: false });
+    var self = this;
     var config = {
       headers: {
         "Content-Type": "application/json",
@@ -221,16 +308,36 @@ class App extends Component {
     };
     axios
       .get(
-        "http://127.0.0.1:5000/listFiles",
+        "http://127.0.0.1:5000/listPrivateFiles",
         { label: "Test", text: "Test" },
         config
       )
       .then(function(response) {
         console.log(response);
+        let data = response.data;
+        let counter = 0;
+        
+        //callback function
+        self.readTree(data, 'private', counter);
+
+         
+
       })
       .catch(function(error) {
         console.log(error);
       });
+
+      axios({
+        method: 'post',
+        url: 'http://127.0.0.1:5000/upload',
+        data: {
+          fileName: 'fileName'
+        }
+      });
+  }
+
+  componentDidUpdate = () =>{
+    
   }
 
   fileSelection = async (e) => {
@@ -240,13 +347,13 @@ class App extends Component {
       if(e.props.children.includes('.csv')){
         this.setState({ canvasTitle: e.props.children });
         console.log(e, " file selected");
-        let res = await axios.post(`http://127.0.0.1:5000/sendFile`,  {"fileName": e.props.children})
-        console.log("TREE DATA: ", res)
-        // let header = res.data[0]
-        // let data = res.data[1]
+        let res = await axios.post(`http://127.0.0.1:5000/openFile`,  {"name": e.props.children})
+        
+        let header = res.data[0]
+        let data = res.data[1]
         // await this.setState({ header: header })
-        // console.log("header",  header)
-        // console.log("data", data)
+        console.log("header",  header)
+        console.log("data", data)
       }
     }
     //Create these 2 states
@@ -281,41 +388,22 @@ class App extends Component {
     }
   };
 
-  move = (rowInfo) => {
-    console.log(rowInfo.node.sub);
 
-    let newList = this.state.treeDataTwo;
-    newList[0].children[0].children.push(rowInfo.node);
-    console.log(newList[0].children);
-    this.setState({
-      treeDataTwo: newList
-    })
-  }
 
   //move from private to public
   moveFile = rowInfo => {
-    let title = rowInfo.node.sub;
-    console.log(this.state.checked);
-    console.log(this.state.treeDataTwo);
-    let flag = true;
-    // make sure file with same name doesn't exist in public section/change later to update data instead
-    for (var i in this.state.publicList) {
-      if (this.state.publicList[i] === title) {
-        flag = false;
-      }
-    }
-    console.log(this.state.publicList);
-    if (flag) {
-      if (title !== undefined) {
-        const list = [...this.state.publicList, title];
-        this.setState({
-          publicList: list
-        });
-        this.move(rowInfo);
-        console.log(list);
-      }
-      console.log(this.state.publicList);
-    }
+    console.log(rowInfo);
+    console.log(rowInfo.path.length)
+
+    let NEW_NODE = {title: rowInfo.node.title, type: rowInfo.node.type};
+    
+    let newTreeTwo = this.state.treeDataTwo;
+
+    console.log(newTreeTwo)
+
+    newTreeTwo[0].children.push(NEW_NODE)
+
+    this.setState({treeDataTwo: newTreeTwo});
   };
 
   fillBottombar = item => {
@@ -364,37 +452,7 @@ class App extends Component {
 
 
   createNewTree = (tree, newFile) => {
-    // let newObj = tree;
-    // let obj;
-    // let list = [...this.state.privateList, newFile];
-    // let newList;
-    // let name = newFile;
-    // let number = 0;
-
-    // console.log(newFile);
-    // console.log(tree);
-
-    // list.map(item => {
-    //   obj = {
-    //     title: (
-    //       <a
-    //         href="#"
-    //         onClick={() => {
-    //           this.treeClick(item);
-    //         }}
-    //       >
-    //         {item}
-    //       </a>
-    //     ),
-    //     sub: item,
-    //     type: 'file'
-    //   };
-
-    //   // newList.push(obj);
-    //   console.log(obj);
-    //   newObj[0].children.push(obj);  
-    // });
-    // console.log(list);
+    
     
     let rowInfo = tree;
     console.log(tree)
@@ -427,6 +485,28 @@ class App extends Component {
       treeData: newTree.treeData
     });
 
+    var config = {
+      headers: {
+        "Content-Type": "multipart/form-data",
+        "Access-Control-Allow-Origin": "*"
+      }
+    };
+    var formData = new FormData();
+    formData.append('fileName', newFile);
+    axios
+      .post(
+        "http://127.0.0.1:5000/upload",
+        formData,
+        config
+      )
+      .then(function(response) {
+        console.log(response);
+
+      })
+      .catch(function(error) {
+        console.log(error);
+      });
+
     // return list;
   };
 
@@ -436,6 +516,10 @@ class App extends Component {
       treeData
     });
   };
+
+  setDataTwo = treeDataTwo => {
+    this.setState({ treeDataTwo })
+  }
 
   checkArrayUpdate = () => {
     //check for update button click through prop
@@ -474,6 +558,28 @@ class App extends Component {
      });
 
      this.setState({treeData: newTree.treeData, folderCount: this.state.folderCount+1});
+
+     var config = {
+      headers: {
+        "Content-Type": "multipart/form-data",
+        "Access-Control-Allow-Origin": "*"
+      }
+    };
+    var formData = new FormData();
+    formData.append('fileName', 'title');
+    axios
+      .post(
+        "http://127.0.0.1:5000/sendFile",
+        formData,
+        config
+      )
+      .then(function(response) {
+        console.log(response);
+
+      })
+      .catch(function(error) {
+        console.log(error);
+      });
   };
 
   addBtn = rowInfo => {
@@ -574,7 +680,7 @@ class App extends Component {
     if(rowInfo.treeIndex == 0){
       return [
         <div>
-          <button label="Add" onClick={event => this.addNode(rowInfo)}>
+          <button style={this.getStyle()} label="Add" onClick={event => this.addNode(rowInfo)}>
             Add
           </button>
           </div>
@@ -583,13 +689,13 @@ class App extends Component {
     if (rowInfo.node.type === 'folder') {
       
         return [<div>
-            <button label="Add" onClick={event => this.addNode(rowInfo)}>
+            <button  style={this.getStyle()} label="Add" onClick={event => this.addNode(rowInfo)}>
               Add
             </button>
-            <button label="Delete" onClick={event => this.removeNode(rowInfo)}>
+            <button  style={this.getStyle()} label="Delete" onClick={event => this.removeNode(rowInfo)}>
               Remove
             </button>
-            <button label="Rename" onClick={event => this.renameFile(rowInfo)}>
+            <button  style={this.getStyle()}  label="Rename" onClick={event => this.renameFile(rowInfo)}>
               Rename
             </button>
         </div>]
@@ -599,13 +705,13 @@ class App extends Component {
     if (rowInfo.node.type === 'file') {
       return [
         <div>
-          <button label="Delete" onClick={event => this.removeNode(rowInfo)}>
+          <button  style={this.getStyle()} label="Delete" onClick={event => this.removeNode(rowInfo)}>
             Remove
           </button>
-          <button label="Rename" onClick={event => this.renameFile(rowInfo)}>
+          <button  style={this.getStyle()} label="Rename" onClick={event => this.renameFile(rowInfo)}>
             Rename
           </button>
-          <button label="Move" onClick={event => this.moveFile(rowInfo)}>
+          <button  style={this.getStyle()} label="Move" onClick={event => this.moveFile(rowInfo)}>
             Move
           </button>
         </div>
@@ -744,7 +850,7 @@ class App extends Component {
                 
                   <SortableTree
                     treeData={this.state.treeDataTwo}
-                    onChange={treeDataTwo => this.setState({ treeDataTwo })}
+                    onChange={this.setDataTwo}
                     onMoveNode={({ node, treeIndex, path }) =>
                       global.console.debug(
                         "node:",
@@ -755,6 +861,7 @@ class App extends Component {
                         path
                       )
                     }
+                    
                     canDrag={({ node }) => !node.noDragging}
                     canDrop={({ node }) => !node.noDrop}
                     canNodeHaveChildren={({ node }) => node.noCopy}
@@ -780,7 +887,6 @@ class App extends Component {
                 next={this.nextCanvas}
                 moveFile={this.moveFile}
                 checkboxTrigger={this.checkboxTrigger}
-                header={this.state.header}
               />
             </div>
           </div>
