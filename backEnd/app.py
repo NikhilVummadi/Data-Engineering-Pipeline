@@ -8,6 +8,7 @@ from flask import Flask, render_template, request
 from flask_pymongo import PyMongo
 from flask_cors import CORS
 
+
 app = Flask(__name__)
 CORS(app)
 
@@ -90,6 +91,7 @@ def sendFile():
     fname = hold['fileName']
     return mongo1.send_file(fname)
 
+
 @app.route('/changeMast', methods = ['POST'])
 def changeMast():
     hold = request.get_json()
@@ -125,7 +127,11 @@ def addFolder():
     parent = hold['parentName']
     users = mongo1.db.User
     files = mongo1.db.fs.files
-    files.insert({'Name': folder,'type': 'folder', 'parent': parent})
+    poop = []
+    files.insert({'filename': folder,'type': 'folder', 'parent': parent})
+    for things in files.find():
+        if things['filename'] == folder:
+            poop = things['_id']
     for q in users.find():
         if q['username'] == 'abdulhabib':
             foo = q['_id']
@@ -133,7 +139,7 @@ def addFolder():
             '_id': foo
             },{
             '$push':{
-            'folders': folder
+            'folders': poop
             }
             },upsert=False)
     return "Added Folder"
@@ -143,11 +149,13 @@ def listPrivateFiles():
     users = mongo1.db.User
     files = mongo1.db.fs.files
     a = {}
+    tempVar = {"name":"private","children":[]}
     for q in users.find():
         if q['username'] == 'abdulhabib':
             for things in q['folders']:
                 for stuff in files.find():
                     if stuff['_id']== things:
+                        a[stuff['filename']]=[]
                         if stuff['parent'] in a:
                             a[stuff['parent']].append(stuff['filename'])
                         else:
@@ -188,7 +196,62 @@ def listPublicFiles():
                             a[stuff['parent']]=[stuff['filename']]
     return jsonify(a)
 
+@app.route('/moveFiles', methods = ['POST'])
+def moveFiles():
+    hold = request.get_json()
+    tempFile = hold['folderName']
+    parent = hold['parentName']
+    users = mongo1.db.User
+    files = mongo1.db.fs.files
+    for thing in files.find():
+        if thing['filename']==tempFile:
+            mongo1.db.fs.files.update({
+            '_id': thing['_id']
+            },{
+            '$set':{
+            'parent': parent
+            }
+            },upsert=False)
+    return "Moved!"
+
+@app.route('/rename', methods = ['POST'])
+def rename():
+    hold = request.get_json()
+    folder = hold['folderName']
+    nfolder = hold['newFolderName']
+    users = mongo1.db.User
+    files = mongo1.db.fs.files
+    for q in files.find():
+        if q['filename'] == folder:
+            foo = q['_id']
+            mongo1.db.fs.files.update({
+            '_id': foo
+            },{
+            '$set':{
+            'filename': nfolder
+            }
+            },upsert=False)
+    return "Renamed Folder"
+
     
+'''
+@app.route('/remove', methods = ['POST']):
+def remove():
+    hold = request.get_json()
+    name = hold['fileName']
+    files = mongo1.db.fs.files
+    users = mongo1.db.User
+    for q in files.find():
+        foo = q['_id']
+        if q['filename'] == name:
+            files.deleteOne({'_id': foo })
+            for p in users.find():
+                lol=0
+                if p['username'] == 'abdulhabib':
+                    for thing in p['folder']:
+                        if thing == foo:
+
+'''
 
 if __name__ == '__main__':
     app.run(debug=True)
