@@ -269,7 +269,8 @@ class App extends Component {
 
     let rootNode = {
       title: 'private',
-      children: []
+      children: [],
+      type: 'folder'
     }
     // loop through arrayObj taking each node out of list and checking with existing
     while(arrayObj.length > 0){
@@ -277,6 +278,14 @@ class App extends Component {
       for( let i in arrayObj){
         console.log(current)
         if(arrayObj[i].title === current.parent){
+          current.type = 'file'
+          current.title = <a
+          href="#"
+          onClick={() => {
+            this.treeClick(current.title);
+          }}
+        >{current.title}</a>
+          arrayObj[i].type='folder'
           arrayObj[i].children.push(current)
           console.log(arrayObj)
         }
@@ -284,6 +293,15 @@ class App extends Component {
       if (current.parent === 'private'){
         console.log(current)
         rootNode.children.push(current)
+        if(current.children.length == 0){
+          current.type='file'
+          current.title = <a
+          href="#"
+          onClick={() => {
+            this.treeClick(current.title);
+          }}
+        >{current.title}</a>
+        }
       }
     }
 
@@ -422,7 +440,7 @@ class App extends Component {
 
 
   //move from private to public
-  moveFile = rowInfo => {
+  moveFile = async(rowInfo) => {
     console.log(rowInfo);
     console.log(rowInfo.path.length)
 
@@ -435,6 +453,7 @@ class App extends Component {
     newTreeTwo[0].children.push(NEW_NODE)
 
     this.setState({treeDataTwo: newTreeTwo});
+
   };
 
   fillBottombar = item => {
@@ -482,16 +501,16 @@ class App extends Component {
   }
 
 
-  createNewTree = (tree, newFile) => {
+  createNewTree = async (tree, newFile) => {
 
     let rowInfo = tree;
     console.log(tree)
     let NEW_NODE = {title: <a
               href="#"
               onClick={() => {
-                this.treeClick(newFile);
+                this.treeClick(newFile.name);
               }}
-            >{newFile}</a>
+            >{newFile.name}</a>
             , type: 'file'};
     let {node, treeIndex, path} = rowInfo;
     let parentNode = getNodeAtPath({
@@ -515,19 +534,13 @@ class App extends Component {
       treeData: newTree.treeData
     });
 
-    var config = {
-      headers: {
-        "Content-Type": "multipart/form-data",
-        "Access-Control-Allow-Origin": "*"
-      }
-    };
-    var formData = new FormData();
-    formData.append('fileName', newFile);
-    axios
+    let formData = new FormData();
+    formData.set('fileName', newFile);
+    let res = await axios
       .post(
         "http://127.0.0.1:5000/upload",
         formData,
-        config
+        console.log(newFile)
       )
       .then(function(response) {
         console.log(response);
@@ -536,6 +549,8 @@ class App extends Component {
       .catch(function(error) {
         console.log(error);
       });
+
+    console.log("AFTER ADDIng upload", res)
 
     // return list;
   };
@@ -556,7 +571,7 @@ class App extends Component {
     console.log(this.state.upState);
   };
 
-  addNode = (rowInfo) => {
+  addNode = async (rowInfo) => {
     console.log(rowInfo);
     console.log(rowInfo.path.length)
     let currDepth = rowInfo.path.length+1;
@@ -589,17 +604,11 @@ class App extends Component {
 
      this.setState({treeData: newTree.treeData, folderCount: this.state.folderCount+1});
 
-     var config = {
-      headers: {
-        "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": "*"
-      }
-    };
-    axios
+    
+    let res = await axios
       .post(
-        "http://127.0.0.1:5000/sendFile",
-        {fileName: 'title'},
-        config
+        "http://127.0.0.1:5000/addFolder",
+        { folderName: "Test", parentName: "private" }
       )
       .then(function(response) {
         console.log(response);
@@ -608,6 +617,8 @@ class App extends Component {
       .catch(function(error) {
         console.log(error);
       });
+
+    console.log("AFTER ADDING FOLDER", res)
   };
 
   addBtn = rowInfo => {
@@ -661,6 +672,9 @@ class App extends Component {
         privateList: newList
       })
     }
+
+    
+
   };
   
   rename = (rowInfo, newName) => {
@@ -702,6 +716,29 @@ class App extends Component {
     })
     // console.log(this.state.upState);
   };
+
+  onMoveNode = async(node, path) => {
+    console.log(this.state.treeData)
+    this.setState({
+      treeData: this.state.treeData
+    })
+
+    let res = await axios
+    .post(
+      "http://127.0.0.1:5000/moveFiles",
+      { folderName: node.title, parentName: node.parent },
+      console.log(node.parent)
+    )
+    .then(function(response) {
+      console.log(response);
+      
+    })
+    .catch(function(error) {
+      console.log(error);
+    });
+
+    console.log("AFTER ADDING FOLDER", res)
+  }
 
   checkNode = (rowInfo) => {
     console.log(rowInfo);
@@ -824,14 +861,17 @@ class App extends Component {
                   treeData={this.state.treeData}
                   onChange={this.updateTreeData}
                   onMoveNode={({ node, treeIndex, path }) =>
-                    global.console.debug(
-                      "node:",
-                      node,
-                      "treeIndex:",
-                      treeIndex,
-                      "path:",
-                      path
-                    )
+                    // global.console.debug(
+                    //   "node:",
+                    //   node,
+                    //   "treeIndex:",
+                    //   treeIndex,
+                    //   "path:",
+                    //   path
+                    // )
+                    ({ treeData: this.onMoveNode(node, path)})
+                    // post on move tree
+                    
                   }
                   canDrag={({ node }) => !node.noDragging}
                   canDrop={({ node }) => !node.noDrop}

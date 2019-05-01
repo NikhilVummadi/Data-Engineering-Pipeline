@@ -64,7 +64,7 @@ class Upload extends Component {
                   this.props.incrementOnUpload(currentFile);
                   this.props.createNewTree(
                     this.props.treeData,
-                    currentFile.name
+                    currentFile
                   );
                   console.log(currentFile.name);
                 }}
