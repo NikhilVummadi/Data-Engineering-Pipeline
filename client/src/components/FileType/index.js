@@ -23,9 +23,10 @@ class FileType extends Component{
     this.setState({ publicFile: !publicFile})
   }
   render(){ 
-    const { file, submitFileType } = this.props
+    const { file, submitFileType, row } = this.props
     const { fileType, publicFile } = this.state
     return  (
+
       <Form>
       <h5>Select the type of file:</h5>
       <Form.Group>
