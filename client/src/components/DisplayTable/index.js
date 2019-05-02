@@ -10,7 +10,7 @@ const data = [['Row 1 Column 1', 'Row 1 Column 2', 'Row 1 Column 3'],
 			]
 const columns = [{ key: 'id', name: 'ID' }, { key: 'title', name: 'Title' }];
 const rows = [{ id: 1, title: 'Title 1' }];
-const DisplayTable = () => (
+const DisplayTable = ({ columns, rows }) => (
 	<div>
 		<ReactDataGrid
 			columns={columns}

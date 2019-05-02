@@ -88,7 +88,9 @@ def upload():
 def sendFile():
     hold = request.get_json()
     fname = hold['fileName']
-    return mongo1.send_file(fname)
+    response = mongo1.send_file(fname)
+    print("THIS SI THE RESPONSE", response)
+    return response
 
 @app.route('/changeMast', methods = ['POST'])
 def changeMast():
