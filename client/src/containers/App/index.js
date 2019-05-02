@@ -349,7 +349,9 @@ class App extends Component {
         //console.log("header",  header)
         //console.log("data", data)
 
-        console.log("SERVER DICTIONARY", res['data'])
+        //console.log("SERVER DICTIONARY", res['data'])
+        console.log(res.data.split("        "))
+
       }
     }
     //Create these 2 states
