@@ -233,25 +233,19 @@ def rename():
             },upsert=False)
     return "Renamed Folder"
 
-    
-'''
-@app.route('/remove', methods = ['POST']):
+
+
+@app.route('/remove', methods = ['POST'])
 def remove():
     hold = request.get_json()
     name = hold['fileName']
     files = mongo1.db.fs.files
-    users = mongo1.db.User
     for q in files.find():
         foo = q['_id']
         if q['filename'] == name:
-            files.deleteOne({'_id': foo })
-            for p in users.find():
-                lol=0
-                if p['username'] == 'abdulhabib':
-                    for thing in p['folder']:
-                        if thing == foo:
+            files.remove({'_id': foo })
+    return "Removed"
 
-'''
 
 if __name__ == '__main__':
     app.run(debug=True)
