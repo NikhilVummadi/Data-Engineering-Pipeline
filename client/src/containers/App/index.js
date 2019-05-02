@@ -350,8 +350,14 @@ class App extends Component {
         //console.log("data", data)
 
         //console.log("SERVER DICTIONARY", res['data'])
-        console.log(res.data.split("        "))
-
+        console.log(res.data)
+        var temp=res.data.split("        ")
+        var table=new Array()
+        for(var i=0; i<temp.length; i++){
+          table[i]=temp[i].split(",")
+        }
+        
+        //console.log(table)
       }
     }
     //Create these 2 states
