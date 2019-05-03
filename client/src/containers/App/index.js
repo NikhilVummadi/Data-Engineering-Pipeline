@@ -894,6 +894,7 @@ class App extends Component {
                     canDrag={({ node }) => !node.noDragging}
                     canDrop={({ node }) => !node.noDrop}
                     canNodeHaveChildren={({ node }) => node.noCopy}
+                    
                     generateNodeProps={rowInfo => ({
                       buttons: this.checkNode(rowInfo),
                       //ref: this.attachRef,
