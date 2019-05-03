@@ -284,25 +284,15 @@ def dataCheck():
     fileData = hold['fileData']
 
     df=pd.read_json(fileData)
-    # if '.csv' in filename:
-    #     df=pd.read_csv(filename)
-    # elif '.xls' in filename:
-    #     df=pd.read_excel(filename)
 
     if checks=='stats':
         new_df=stats(df)
-        # if debug:
-        #     df_View_and_Store(new_df, 'Stats')
      
     elif checks=='types':
         new_df=types(df)
-        # if debug:
-        #     df_View_and_Store(new_df, 'Types')
 
     elif checks=='missing':
         new_df=missing(df)
-        # if debug:
-        #     df_View_and_Store(new_df, 'Missing_Values')
 
 
 if __name__ == '__main__':

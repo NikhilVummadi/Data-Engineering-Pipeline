@@ -497,13 +497,13 @@ class App extends Component {
     
     let newItem=true;
     for(let i in this.state.privateList){
-      if(this.state.privateList[i] === newName){
-        newItem = false
-      }
+      //if(this.state.privateList[i] === newName){
+      //  newItem = false
+      //}
     }
 
     if(newItem){
-      let NEW_NODE = {title: newName, type: 'folder'};
+      //let NEW_NODE = {title: newName, type: 'folder'};
       let {node, treeIndex, path} = rowInfo;
       // path.pop();
       let parentNode = getNodeAtPath({
@@ -524,7 +524,7 @@ class App extends Component {
               treeData: this.state.treeData,
               depth: 3,
               minimumTreeIndex: rowInfo.treeIndex+1,
-              newNode: NEW_NODE,
+      //        newNode: NEW_NODE,
               parentKey: parentKey,
               getNodeKey: ({ treeIndex }) =>  treeIndex,
               expandParent: false
@@ -536,7 +536,7 @@ class App extends Component {
         });
 
       console.log(rowInfo)
-      let data = { folderName: newName, parentName: rowInfo.node.title }
+      let data = { parentName: rowInfo.node.title }//originally contained newName
       let res = await axios
         .post(
           "http://127.0.0.1:5000/addFolder",
@@ -650,7 +650,7 @@ class App extends Component {
 
     // Some component popup with input
     // change name of folder/file to value of input text
-    }
+    })
   };
 
   renameFile = (rowInfo) => {
