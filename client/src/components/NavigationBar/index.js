@@ -11,7 +11,7 @@ const NavigationBar = ({ uploadFile, loginBtn }) => (
             <Nav.Link href="#home">Home</Nav.Link>
             <Nav.Link href="#link"></Nav.Link>
             <ButtonToolbar>
-            <Button onClick={uploadFile}  variant="secondary">Upload</Button>
+            <Button onClick={uploadFile} variant="info">Upload</Button>
             </ButtonToolbar>
         </Nav>
         <Button variant="primary" onClick={loginBtn}>Login</Button>

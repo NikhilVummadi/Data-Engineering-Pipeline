@@ -15,16 +15,20 @@ const rows = [{ id: 1, title: 'Title 1' }];
 
 class DisplayTable extends Component {	//const DisplayTable = () => ( //{{ columns, rows }}
 	
-	statistics = () => {
+	statistics = () =>{ //async(e) => {
 		console.log("STATISTICS");
+		//let res = await axios.post(`http://127.0.0.1:5000/dataCheck`, {"fileData": "", "check": "stats"});
 	}
 
-	dataTypes = () =>  {
+	dataTypes = () =>{ //async(e) => {
 		console.log("DATA TYPES");
+		//let res = await axios.post(`http://127.0.0.1:5000/dataCheck`, {"fileData": "", "check": "types"});
+
 	}
 
-	emptyCells = () => {
+	emptyCells = () =>{ //async(e) => {
 		console.log("CHECK MISSING VALUES");
+		//let res = await axios.post(`http://127.0.0.1:5000/dataCheck`, {"fileData": "", "check": "missing"});
 	}
 
 	render(){
