@@ -1,13 +1,20 @@
 //Login component
 import React, { Component } from "react";
-import Modal from "react-bootstrap/Modal";
-import Form from "react-bootstrap/Form";
-import { Button } from "react-bootstrap";
+// import Modal from "react-bootstrap/Modal";
+// import Form from "react-bootstrap/Form";
+import { Modal, Button, Form, FormGroup, FormControl } from "react-bootstrap";
 
 
 //import { Modal, ModalDialog, modalHeader, ModalFooter, ModalTitle, ModalBody } from 'react-bootstrap/Modal'
 
 class MyFiles extends Component {
+
+  constructor(props){
+    super();
+    this.state = {
+      name: ''
+    }
+  }
 
   componentWillMount(){
     document.addEventListener('mousedown', this.handleClick, false);
@@ -25,11 +32,22 @@ class MyFiles extends Component {
   }
 
   handleClickOutside = () => {
-    this.props.addBtn();
+    this.props.addBtn()
+  }
+
+  handleNameChange = (e) => {
+    this.setState({
+      name: e.target.value
+    })
+  }
+
+  handleSubmit = (e) => {
+    return this.state.name;
   }
 
   render() {
     console.log(this.props);
+    
     return (
       <div
         className="background"
@@ -42,20 +60,19 @@ class MyFiles extends Component {
           </Modal.Header>
           <Modal.Body>
             <Form>
-              <Form.Group controlId="formBasicEmail">
+              <FormGroup controlId="formBasicEmail">
                 <Form.Label style={{ width: "10rem" }}>
-                  Rename
+                  Name
                 </Form.Label>
-                <Form.Control type="email" placeholder="Enter new name" inputRef={ref => this.input = ref}
-                />
-              </Form.Group>
+                <FormControl type="text" placeholder="Enter new name" onChange={this.handleNameChange}/>
+              </FormGroup>
 
               
 
               <div style={{ float: "right" }}>
                 
                 
-                <Button variant="primary" type="submit" onClick={this.props.addNode(this.props.rowInfo, 'vale')}>
+                <Button variant="primary" type="submit" onClick={e => {this.props.addBtn(e); this.props.addNode(this.props.rowInfo, this.handleSubmit())}}>
                   Submit
                 </Button>
               </div>
