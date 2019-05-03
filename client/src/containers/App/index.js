@@ -17,6 +17,7 @@ import {
   addNodeUnderParent,
   removeNodeAtPath,
   insertNode,
+  getTreeFromFlatData,
   map,
   walk
 } from "react-sortable-tree";
@@ -99,12 +100,9 @@ class App extends Component {
       //show: false,
       checked: false,
       folderCount: 1,
+      objectArray: [],
       treeData: [
-        {
-          title: "Private",
-          children: []
-          
-        }
+        
       ],
       treeDataTwo: [
         {
@@ -229,89 +227,92 @@ class App extends Component {
     let arrayKeys = Object.keys(treeData);
     let arrayValues = Object.values(treeData);
     let arrayObj = []
+    let tempArray = []
 
     console.log(arrayKeys)
     console.log(arrayValues)
 
     // create array of objects with parents, children, and title
     for(let i in arrayKeys){
-      let obj;
-      for(let j in arrayValues){
-        for(let k in arrayValues[j]){
-          if(arrayKeys[i] === arrayValues[j][k]){
-            obj = {
-              title: arrayValues[i][k]===undefined ? 'temp' : arrayValues[i][k],
-              parent: arrayKeys[i],
-              children: []
-            }
-            console.log(obj)
-            arrayObj.push(obj)
-          }
+      let obj = {};
+      let keysLined = arrayKeys[i];
+      let valuesLined = arrayValues[i]; //value within key
+      //list inside arrayValues list
+      console.log(keysLined)
+      for(let j in valuesLined){
+        console.log(valuesLined[j])
+        obj.title = valuesLined[j];
+        obj.parent = keysLined;
+        
+        arrayObj.push(obj);
+        console.log(obj);
+        obj = {}
         }
       }
-
-      if(arrayKeys[i] === 'private'){
-        console.log(arrayValues[i])
-        console.log(arrayKeys[i])
-        for( let j in arrayValues[i]){
-          obj = {
-            title: arrayValues[i][j] ,
-            parent: arrayKeys[i],
-            children: []
-          }
-          arrayObj.push(obj)
+      
+     //check if node is file or folder using key array
+     tempArray = arrayObj;
+     for(let i in tempArray){
+       let temp = tempArray[i];
+       console.log(temp)
+       let bool = false;
+       for(let j in arrayKeys){
+        //keys are all folder node with value 
+        if(arrayKeys[j] === temp.title){
+          bool = true
         }
-      } 
-    }
+       }
+       if(bool){
+         temp.type = 'folder'
+       } else {
+         temp.type = 'file'
+       }
+     }
+    
 
     
-    console.log(arrayObj)
+    console.log(tempArray)
+
+    
 
     let rootNode = {
       title: 'private',
       children: [],
       type: 'folder'
     }
-    // loop through arrayObj taking each node out of list and checking with existing
-    while(arrayObj.length > 0){
-      let current = arrayObj.shift();
-      for( let i in arrayObj){
-        console.log(current)
-        if(arrayObj[i].title === current.parent){
-          current.type = 'file'
-          current.title = <a
-          href="#"
-          onClick={() => {
-            this.treeClick(current.title);
-          }}
-        >{current.title}</a>
-          arrayObj[i].type='folder'
-          arrayObj[i].children.push(current)
-          console.log(arrayObj)
-        }
+    
+    
+    
+    // loop through arrayObj taking each node out of list, order them into tree using parent and title
+    for(let i in tempArray){
+      console.log(i)
+      if(tempArray[i].type === 'file'){
+        tempArray[i].title = <a
+        href="#"
+        onClick={() => {
+          this.treeClick(tempArray[i].title);
+        }}
+      >{tempArray[i].title}</a>
       }
-      if (current.parent === 'private'){
-        console.log(current)
-        rootNode.children.push(current)
-        if(current.children.length == 0){
-          current.type='file'
-          current.title = <a
-          href="#"
-          onClick={() => {
-            this.treeClick(current.title);
-          }}
-        >{current.title}</a>
-        }
+      // let popped = tempArray.pop();{
+      if(tempArray[i].parent === 'private'){
+        rootNode.children.push(tempArray[i])
+      } else {
+        //if parent not private
+        
       }
+      
     }
+
+    
 
     console.log(rootNode)
 
     this.setState({
-      treeData: [rootNode]
+      treeData: [rootNode],
     })
-
-
+  
+  
   }
 
   readPublic = (data) => {
@@ -339,6 +340,7 @@ class App extends Component {
   }
 
   componentDidMount() {
+
     // this.setState({ nextCanvas: false });
     var self = this;
     var config = {
@@ -357,7 +359,6 @@ class App extends Component {
       .then(function(response) {
         console.log(response);
         let data = response.data;
-        let counter = 0;
         
         //callback function
         self.readTree(data);
@@ -383,10 +384,6 @@ class App extends Component {
       .catch(function(error) {
         console.log(error);
       });
-  }
-
-  componentDidUpdate = () =>{
-    
   }
 
   fileSelection = async (e) => {
@@ -571,54 +568,67 @@ class App extends Component {
     console.log(this.state.upState);
   };
 
-  addNode = async (rowInfo) => {
+  addNode = async (rowInfo, newName) => {
     console.log(rowInfo);
-    console.log(rowInfo.path.length)
-    let currDepth = rowInfo.path.length+1;
-    let NEW_NODE = {title: 'title', type: 'folder'};
-    let {node, treeIndex, path} = rowInfo;
-    path.pop();
-    let parentNode = getNodeAtPath({
-        treeData: this.state.treeData,
-        path : rowInfo.path,
-        getNodeKey: ({ treeIndex }) =>  treeIndex,
-        ignoreCollapsed : true
-    });
-    let getNodeKey = ({ node: object, treeIndex: number }) => {
-        return number;
-    };
-    let parentKey = getNodeKey(parentNode);
-    if(parentKey == -1) {
-        parentKey = null;
+    
+    let newItem=true;
+    for(let i in this.state.privateList){
+      if(this.state.privateList[i] === newName){
+        newItem = false
+      }
     }
-    
-    let newTree = insertNode({
-            treeData: this.state.treeData,
-            depth: 3,
-            minimumTreeIndex: rowInfo.treeIndex+1,
-            newNode: NEW_NODE,
-            parentKey: parentKey,
-            getNodeKey: ({ treeIndex }) =>  treeIndex,
-            expandParent: false
-     });
 
-     this.setState({treeData: newTree.treeData, folderCount: this.state.folderCount+1});
-
-    
-    let res = await axios
-      .post(
-        "http://127.0.0.1:5000/addFolder",
-        { folderName: "Test", parentName: "private" }
-      )
-      .then(function(response) {
-        console.log(response);
-
-      })
-      .catch(function(error) {
-        console.log(error);
+    if(newItem){
+      let NEW_NODE = {title: newName, type: 'folder'};
+      let {node, treeIndex, path} = rowInfo;
+      // path.pop();
+      let parentNode = getNodeAtPath({
+          treeData: this.state.treeData,
+          path : rowInfo.path,
+          getNodeKey: ({ treeIndex }) =>  treeIndex,
+          ignoreCollapsed : true
+      });
+      let getNodeKey = ({ node: object, treeIndex: number }) => {
+          return number;
+      };
+      let parentKey = getNodeKey(parentNode);
+      if(parentKey == -1) {
+          parentKey = null;
+      }
+      
+      let newTree = insertNode({
+              treeData: this.state.treeData,
+              depth: 3,
+              minimumTreeIndex: rowInfo.treeIndex+1,
+              newNode: NEW_NODE,
+              parentKey: parentKey,
+              getNodeKey: ({ treeIndex }) =>  treeIndex,
+              expandParent: false
       });
 
-    console.log("AFTER ADDING FOLDER", res)
+      this.setState({treeData: newTree.treeData,
+        folderCount: this.state.folderCount+1,
+          privateList: [...this.state.privateList, rowInfo.node.title]
+        });
+
+      console.log(rowInfo)
+      let data = { folderName: newName, parentName: rowInfo.node.title }
+      let res = await axios
+        .post(
+          "http://127.0.0.1:5000/addFolder",
+          data
+        )
+        .then(function(response) {
+          console.log(response);
+
+        })
+        .catch(function(error) {
+          console.log(error);
+        });
+
+      console.log("AFTER ADDING FOLDER", res)
+      console.log(this.state.privateList)
+      }
   };
 
   addBtn = rowInfo => {
@@ -635,19 +645,22 @@ class App extends Component {
         addState: true
       });
     }
-    console.log(this.state.addState)
+    this.setState({
+      row: rowInfo
+    })
+    console.log(rowInfo)
   }
 
-  removeNode = (rowInfo) => {
+  removeNode = async (rowInfo) => {
     console.log(rowInfo)
 
     let newList = [];
     let { node, treeIndex, path } = rowInfo;
-    for(let i in this.state.privateList){
-      if(this.state.privateList[i] != rowInfo.node.sub){
-        newList.push(this.state.privateList[i])
-      }
-    }
+    // for(let i in this.state.privateList){
+    //   if(this.state.privateList[i] != rowInfo.node.sub){
+    //     newList.push(this.state.privateList[i])
+    //   }
+    // }
     console.log(newList)
 
     this.setState({
@@ -673,11 +686,40 @@ class App extends Component {
       })
     }
 
-    
+    console.log(rowInfo.node.type)
+    let data = (rowInfo.node.type === 'file') ? {fileName: rowInfo.node.title.props.children} : {fileName: rowInfo.node.title};
+    //request
+    var config = {
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*"
+      }
+    }; 
+    let res = await axios
+      .post(
+        "http://127.0.0.1:5000/remove",
+        data
+      )
+      .then(function(response) {
+        console.log(response);
+
+      })
+      .catch(function(error) {
+        console.log(error);
+      });
+
+    console.log("AFTER REMOVING FOLDER", res)
 
   };
   
-  rename = (rowInfo, newName) => {
+  rename = async (rowInfo, newName) => {
+    console.log(rowInfo);
+    let oldName = rowInfo.node.title;
+    let depth;
+    if(rowInfo.node.type === 'file'){
+      depth = rowInfo.node.title.props.children;
+    }
+    console.log(oldName);
     if(rowInfo.node.type == 'file'){
       console.log(rowInfo.node.title)
       rowInfo.node.title = <a
@@ -690,8 +732,28 @@ class App extends Component {
     } else{
       rowInfo.node.title = newName
     }
-    
+  
+    console.log(depth);
 
+    let data = (rowInfo.node.type == 'file') ? {
+      folderName: depth, newFolderName: newName
+    } : { folderName: oldName, newFolderName: newName }
+
+    //request
+    let res = await axios
+      .post(
+        "http://127.0.0.1:5000/rename",
+        data
+      )
+      .then(function(response) {
+        console.log(response);
+
+      })
+      .catch(function(error) {
+        console.log(error);
+      });
+
+    console.log("AFTER ADDING FOLDER", res)
 
     
     
@@ -714,7 +776,7 @@ class App extends Component {
     this.setState({
       row: rowInfo
     })
-    // console.log(this.state.upState);
+    
   };
 
   onMoveNode = async(node, path) => {
@@ -723,21 +785,22 @@ class App extends Component {
       treeData: this.state.treeData
     })
 
+    console.log(node)
+
     let res = await axios
     .post(
       "http://127.0.0.1:5000/moveFiles",
       { folderName: node.title, parentName: node.parent },
-      console.log(node.parent)
     )
     .then(function(response) {
       console.log(response);
-      
+      console.log(node)
     })
     .catch(function(error) {
       console.log(error);
     });
 
-    console.log("AFTER ADDING FOLDER", res)
+    console.log("AFTER move", res)
   }
 
   checkNode = (rowInfo) => {
@@ -745,7 +808,7 @@ class App extends Component {
     if(rowInfo.treeIndex == 0){
       return [
         <div>
-          <button style={this.getStyle()} label="Add" onClick={event => this.addNode(rowInfo)}>
+          <button style={this.getStyle()} label="Add" onClick={event => this.addBtn(rowInfo)}>
             Add
           </button>
           </div>
@@ -754,7 +817,7 @@ class App extends Component {
     if (rowInfo.node.type === 'folder') {
       
         return [<div>
-            <button  style={this.getStyle()} label="Add" onClick={event => this.addNode(rowInfo)}>
+            <button  style={this.getStyle()} label="Add" onClick={event => this.addBtn(rowInfo)}>
               Add
             </button>
             <button  style={this.getStyle()} label="Delete" onClick={event => this.removeNode(rowInfo)}>
@@ -826,8 +889,7 @@ class App extends Component {
       file = (
         <MyFiles
           addBtn={this.addBtn}
-          rowInfo={this.state.newName}
-          treeData={this.state.treeData}
+          rowInfo={this.state.row}
           addNode={this.addNode}
         />
       )
@@ -842,7 +904,6 @@ class App extends Component {
         </div>
       );
     }
-
 
     return (
       <div style={{height: '100vh', backgroundImage: `url(${CanvasBanner})`, backgroundPosition: 'center', backgroundSize: 'cover', backgroundRepeat: 'no-repeat'}}>
@@ -860,7 +921,7 @@ class App extends Component {
                 <SortableTree
                   treeData={this.state.treeData}
                   onChange={this.updateTreeData}
-                  onMoveNode={({ node, treeIndex, path }) =>
+                  onMoveNode={({ treeData, node, path}) =>
                     // global.console.debug(
                     //   "node:",
                     //   node,
@@ -869,7 +930,7 @@ class App extends Component {
                     //   "path:",
                     //   path
                     // )
-                    ({ treeData: this.onMoveNode(node, path)})
+                    ({ treeData: this.onMoveNode(treeData)})
                     // post on move tree
                     
                   }
@@ -885,6 +946,7 @@ class App extends Component {
                   })}
                   theme={FileExplorerTheme}
                 />
+                
                 {/* {console.log("THIS IS THE TARGET", this.state.target)} */}
                 <Overlay
                   show={this.state.showOverlay}
@@ -919,7 +981,7 @@ class App extends Component {
                   <SortableTree
                     treeData={this.state.treeDataTwo}
                     onChange={this.setDataTwo}
-                    onMoveNode={({ node, treeIndex, path }) =>
+                    onMoveNode={({ node, path, treeIndex }) =>
                       global.console.debug(
                         "node:",
                         node,

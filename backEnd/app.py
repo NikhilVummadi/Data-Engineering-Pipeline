@@ -8,6 +8,7 @@ from flask import Flask, render_template, request
 from flask_pymongo import PyMongo
 from flask_cors import CORS
 
+
 app = Flask(__name__)
 CORS(app)
 
@@ -89,6 +90,7 @@ def sendFile():
     hold = request.get_json()
     fname = hold['fileName']
     return mongo1.send_file(fname)
+
 
 @app.route('/changeMast', methods = ['POST'])
 def changeMast():
@@ -211,6 +213,37 @@ def moveFiles():
             }
             },upsert=False)
     return "Moved!"
+
+@app.route('/rename', methods = ['POST'])
+def rename():
+    hold = request.get_json()
+    folder = hold['folderName']
+    nfolder = hold['newFolderName']
+    users = mongo1.db.User
+    files = mongo1.db.fs.files
+    for q in files.find():
+        if q['filename'] == folder:
+            foo = q['_id']
+            mongo1.db.fs.files.update({
+            '_id': foo
+            },{
+            '$set':{
+            'filename': nfolder
+            }
+            },upsert=False)
+    return "Renamed Folder"
+
+    
+@app.route('/remove', methods = ['POST'])
+def remove():
+    hold = request.get_json()
+    name = hold['fileName']
+    files = mongo1.db.fs.files
+    for q in files.find():
+        foo = q['_id']
+        if q['filename'] == name:
+            files.remove({'_id': foo })
+    return "Removed"
 
 if __name__ == '__main__':
     app.run(debug=True)
