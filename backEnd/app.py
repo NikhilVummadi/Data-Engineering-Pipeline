@@ -8,6 +8,8 @@ from flask import Flask, render_template, request
 from flask_pymongo import PyMongo
 from flask_cors import CORS
 import io
+import numpy as np
+import pandas as pd
 
 
 app = Flask(__name__)
@@ -261,6 +263,47 @@ def remove():
         if q['filename'] == name:
             files.remove({'_id': foo })
     return "Removed"
+
+
+def stats(df):
+    temp=df.describe(include='all').loc[['count', 'min', 'max', 'mean', 'std']]
+    temp.replace(np.nan, '-', inplace=True)
+    return temp
+
+def types(df):
+    return df.dtypes
+#"ID numbers"
+
+def missing(df):
+    return df.isnull().sum(axis=0)
+
+@app.route('/dataCheck', methods = ['POST'])
+def dataCheck():
+    hold = request.get_json()
+    checks = hold['check']
+    fileData = hold['fileData']
+
+    df=pd.read_json(fileData)
+    # if '.csv' in filename:
+    #     df=pd.read_csv(filename)
+    # elif '.xls' in filename:
+    #     df=pd.read_excel(filename)
+
+    if checks=='stats':
+        new_df=stats(df)
+        # if debug:
+        #     df_View_and_Store(new_df, 'Stats')
+     
+    elif checks=='types':
+        new_df=types(df)
+        # if debug:
+        #     df_View_and_Store(new_df, 'Types')
+
+    elif checks=='missing':
+        new_df=missing(df)
+        # if debug:
+        #     df_View_and_Store(new_df, 'Missing_Values')
+
 
 if __name__ == '__main__':
     app.run(debug=True)
