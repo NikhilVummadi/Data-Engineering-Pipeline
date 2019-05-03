@@ -312,10 +312,13 @@ class App extends Component {
       
     }
 
+<<<<<<< HEAD
     
 
     console.log(rootNode)
 
+=======
+>>>>>>> a2d0620609ac14c1dbd869aaa70a58645e42fa6e
     this.setState({
       treeData: [rootNode],
     })
@@ -573,23 +576,27 @@ class App extends Component {
     this.setState({ treeDataTwo })
   }
 
+<<<<<<< HEAD
   checkArrayUpdate = () => {
     //check for update button click through prop
     console.log(this.state.upState);
   };
 
   addNode = async (rowInfo, newName) => {
+=======
+  addNode = async (rowInfo) => {
+>>>>>>> a2d0620609ac14c1dbd869aaa70a58645e42fa6e
     console.log(rowInfo);
     
     let newItem=true;
     for(let i in this.state.privateList){
-      if(this.state.privateList[i] === newName){
-        newItem = false
-      }
+      //if(this.state.privateList[i] === newName){
+      //  newItem = false
+      //}
     }
 
     if(newItem){
-      let NEW_NODE = {title: newName, type: 'folder'};
+      //let NEW_NODE = {title: newName, type: 'folder'};
       let {node, treeIndex, path} = rowInfo;
       // path.pop();
       let parentNode = getNodeAtPath({
@@ -610,7 +617,7 @@ class App extends Component {
               treeData: this.state.treeData,
               depth: 3,
               minimumTreeIndex: rowInfo.treeIndex+1,
-              newNode: NEW_NODE,
+      //        newNode: NEW_NODE,
               parentKey: parentKey,
               getNodeKey: ({ treeIndex }) =>  treeIndex,
               expandParent: false
@@ -622,7 +629,7 @@ class App extends Component {
         });
 
       console.log(rowInfo)
-      let data = { folderName: newName, parentName: rowInfo.node.title }
+      let data = { parentName: rowInfo.node.title }//originally contained newName
       let res = await axios
         .post(
           "http://127.0.0.1:5000/addFolder",
@@ -696,6 +703,7 @@ class App extends Component {
       })
     }
 
+<<<<<<< HEAD
     console.log(rowInfo.node.type)
     let data = (rowInfo.node.type === 'file') ? {fileName: rowInfo.node.title.props.children} : {fileName: rowInfo.node.title};
     //request
@@ -720,6 +728,8 @@ class App extends Component {
 
     console.log("AFTER REMOVING FOLDER", res)
 
+=======
+>>>>>>> a2d0620609ac14c1dbd869aaa70a58645e42fa6e
   };
   
   rename = async (rowInfo, newName) => {
@@ -758,6 +768,7 @@ class App extends Component {
       .then(function(response) {
         console.log(response);
 
+<<<<<<< HEAD
       })
       .catch(function(error) {
         console.log(error);
@@ -769,9 +780,12 @@ class App extends Component {
     
     
 
+=======
+>>>>>>> a2d0620609ac14c1dbd869aaa70a58645e42fa6e
     // Some component popup with input
     // change name of folder/file to value of input text
-  }
+    })
+  };
 
   renameFile = (rowInfo) => {
     if (this.state.rename) {

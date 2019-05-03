@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-// import { ButtonToolbar, Button, Form } from "react-bootstrap";
+//import { ButtonToolbar, Button, Form } from "react-bootstrap";
 import "./Canvas.css";
 // import DataChecks from "./DataChecks";
 import DisplayTable from "../../components/DisplayTable"
@@ -41,12 +41,12 @@ class Canvas extends Component {
               }}
             >
             </div>
-            {columns === [] ?
+            {//columns === [] ?  //columns === []
               <DisplayTable columns={columns} rows={rows} />
-              : 
-              <>
-                <h3 style={{ textAlign: "center" }}> THERE IS NO DATA TO BE DISPLAYED </h3>
-              </>
+              //: 
+              //<>
+              //  <h3 style={{ textAlign: "center" }}> THERE IS NO DATA TO BE DISPLAYED </h3>
+              //</>
             }
           </>
         ) : (

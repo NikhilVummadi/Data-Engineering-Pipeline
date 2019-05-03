@@ -11,10 +11,10 @@ const NavigationBar = ({ uploadFile, loginBtn }) => (
             <Nav.Link href="#home">Home</Nav.Link>
             <Nav.Link href="#link"></Nav.Link>
             <ButtonToolbar>
-            <Button onClick={uploadFile}>Upload</Button>
+            <Button onClick={uploadFile} variant="info">Upload</Button>
             </ButtonToolbar>
         </Nav>
-        <Button variant="success" onClick={loginBtn}>Login</Button>
+        <Button variant="primary" onClick={loginBtn}>Login</Button>
         </Navbar.Collapse>
     </Navbar>
     </>
