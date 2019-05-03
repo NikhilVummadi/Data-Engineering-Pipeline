@@ -24,7 +24,7 @@ class Canvas extends Component {
   };
 
   render() {
-    const { title, columns, rows } = this.props;
+    const { title, columns, rows, datachecks } = this.props;
     // const { fileType, publicFile } = this.state;
     // console.log("THIS IS THE HEADERS", header)
     console.log("THIS IS COLUMNS", columns)
@@ -42,7 +42,7 @@ class Canvas extends Component {
             >
             </div>
             {//columns === [] ?  //columns === []
-              <DisplayTable columns={columns} rows={rows} />
+              <DisplayTable columns={columns} rows={rows} datachecks={datachecks} />
               //: 
               //<>
               //  <h3 style={{ textAlign: "center" }}> THERE IS NO DATA TO BE DISPLAYED </h3>

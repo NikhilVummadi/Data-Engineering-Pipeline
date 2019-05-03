@@ -356,6 +356,21 @@ class App extends Component {
     // Replace the variavles in Canvas to use the parameters
   };
 
+	datachecks = (check) =>{
+    if (check === "stats"){
+      console.log("STATISTICS");
+      //let res = await axios.post(`http://127.0.0.1:5000/dataCheck`, {"fileData": "", "check": check});
+    }
+    else if (check === "types"){
+      console.log("DATA TYPES");
+      //let res = await axios.post(`http://127.0.0.1:5000/dataCheck`, {"fileData": "", "check": "types"});
+    }
+    else if (check === "missing"){
+      console.log("CHECK MISSING VALUES");
+      //let res = await axios.post(`http://127.0.0.1:5000/dataCheck`, {"fileData": "", "check": "missing"});
+    }
+	}
+  
   //increment list with upload item whenever submit is clicked
   incrementOnUpload = fileName => {
     let flag = true;
@@ -922,6 +937,7 @@ class App extends Component {
                 checkboxTrigger={this.checkboxTrigger}
                 columns={this.state.columns}
                 rows={this.state.rows}
+                datachecks={this.datachecks}
               />
             </div>
           </div>
