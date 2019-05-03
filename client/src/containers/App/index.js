@@ -6,6 +6,7 @@ import FileType from "../../components/FileType";
 import CanvasBanner from "../../images/canvasBanner.jpg";
 import NavLink from "react-bootstrap/NavLink";
 import SortableTree from "react-sortable-tree";
+import Button from 'react-bootstrap/Button';
 import FileExplorerTheme from 'react-sortable-tree-theme-file-explorer';
 import { Overlay, Popover, OverlayTrigger } from 'react-bootstrap';
 import Tooltip from 'react-bootstrap/Tooltip';
@@ -701,43 +702,43 @@ class App extends Component {
     if(rowInfo.treeIndex == 0){
       return [
         <div>
-          <button label="Add" onClick={event => this.addNode(rowInfo)}>
+          <Button variant="link" size="sm" label="Add" onClick={event => this.addNode(rowInfo)}>
             <IoIosAddCircle style={{color: 'forestgreen'}} />
-          </button>
+          </Button>
         </div>
       ]
     }
     if (rowInfo.node.type === 'folder') {
       
         return [<div>
-            <button label="Add" onClick={event => this.addNode(rowInfo)}>
+            <Button variant="link" size="sm" label="Add" onClick={event => this.addNode(rowInfo)}>
               <IoIosAddCircle style={{color: 'forestgreen'}} />
-            </button>
+            </Button>
 
-            <button label="Delete" onClick={event => this.removeNode(rowInfo)}>
+            <Button variant="link" size="sm" label="Delete" onClick={event => this.removeNode(rowInfo)}>
               <IoIosCloseCircle style={{color: 'crimson'}} />
-            </button>
+            </Button>
 
-            <button label="Rename" onClick={event => this.renameFile(rowInfo)}>
-              <FaPen />
-            </button>
+            <Button variant="link" size="sm" label="Rename" onClick={event => this.renameFile(rowInfo)}>
+              <FaPen style={{color: 'black'}}/>
+            </Button>
           </div>]
 
     }
     if (rowInfo.node.type === 'file') {
       return [
         <div>
-          <button label="Delete" onClick={event => this.removeNode(rowInfo)}>
+          <Button variant="link" size="sm" label="Delete" onClick={event => this.removeNode(rowInfo)}>
             <IoIosCloseCircle style={{color: 'crimson'}}  />
-          </button>
+          </Button>
           
-          <button label="Rename" onClick={event => this.renameFile(rowInfo)}>
-            <FaPen />
-          </button>
+          <Button variant="link" size="sm" label="Rename" onClick={event => this.renameFile(rowInfo)}>
+            <FaPen style={{color: 'black'}}/>
+          </Button>
 
-          <button label="Move" onClick={event => this.moveFile(rowInfo)}>
+          <Button variant="link" size="sm" label="Move" onClick={event => this.moveFile(rowInfo)}>
             <IoIosArrowDown style={{color: 'blue'}} />
-          </button>
+          </Button>
         </div>
       ];
     }
