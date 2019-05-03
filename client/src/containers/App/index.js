@@ -11,6 +11,8 @@ import { Overlay, Popover, OverlayTrigger } from 'react-bootstrap';
 import Tooltip from 'react-bootstrap/Tooltip';
 import axios from "axios";
 import "react-sortable-tree/style.css"; // This only needs to be imported once in your app
+import { IoIosAddCircle, IoIosCloseCircle, IoIosArrowDown } from "react-icons/io";
+import { FaPen } from "react-icons/fa";
 import Rename from "../../components/renameFile"
 import {
   getNodeAtPath,
@@ -68,7 +70,6 @@ class App extends Component {
     this.loginSubmit = this.loginSubmit.bind(this);
     this.rightClick=this.rightClick.bind(this);
   }
-
   //button style
   getStyle = () => {
     return {
@@ -700,24 +701,32 @@ class App extends Component {
     if(rowInfo.treeIndex == 0){
       return [
         <div>
+          <IoIosAddCircle style={{color: 'green'}}>
           <button style={this.getStyle()} label="Add" onClick={event => this.addNode(rowInfo)}>
             Add
           </button>
+          </IoIosAddCircle>
         </div>
       ]
     }
     if (rowInfo.node.type === 'folder') {
       
         return [<div>
+            <IoIosAddCircle style={{color: 'green'}}>
             <button  style={this.getStyle()} label="Add" onClick={event => this.addNode(rowInfo)}>
               Add
             </button>
+            </IoIosAddCircle>
+            <IoIosCloseCircle style={{color: 'red'}}>
             <button  style={this.getStyle()} label="Delete" onClick={event => this.removeNode(rowInfo)}>
               Remove
             </button>
+            </IoIosCloseCircle>
+            <FaPen>
             <button  style={this.getStyle()}  label="Rename" onClick={event => this.renameFile(rowInfo)}>
               Rename
             </button>
+            </FaPen>
         </div>]
       // }
       
@@ -725,15 +734,21 @@ class App extends Component {
     if (rowInfo.node.type === 'file') {
       return [
         <div>
+          <IoIosCloseCircle style={{color: 'red'}}>
           <button  style={this.getStyle()} label="Delete" onClick={event => this.removeNode(rowInfo)}>
             Remove
           </button>
+          </IoIosCloseCircle>
+          <FaPen>
           <button  style={this.getStyle()} label="Rename" onClick={event => this.renameFile(rowInfo)}>
             Rename
           </button>
+          </FaPen>
+          <IoIosArrowDown style={{color: 'blue'}}>
           <button  style={this.getStyle()} label="Move" onClick={event => this.moveFile(rowInfo)}>
             Move
           </button>
+          </IoIosArrowDown>
         </div>
       ];
     }
