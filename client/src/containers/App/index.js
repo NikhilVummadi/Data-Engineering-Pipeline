@@ -13,7 +13,7 @@ import Tooltip from 'react-bootstrap/Tooltip';
 import axios from "axios";
 import "react-sortable-tree/style.css"; // This only needs to be imported once in your app
 import { IoIosAddCircle, IoIosCloseCircle, IoIosArrowDown,  } from "react-icons/io";
-import { FaPen } from "react-icons/fa";
+import { FaPen, FaArrowsAltV } from "react-icons/fa";
 import Rename from "../../components/renameFile"
 import {
   getNodeAtPath,
@@ -737,7 +737,7 @@ class App extends Component {
           </Button>
 
           <Button variant="link" size="sm" label="Move" onClick={event => this.moveFile(rowInfo)}>
-            <IoIosArrowDown style={{color: 'blue'}} />
+            <FaArrowsAltV style={{color: 'blue'}} />
           </Button>
         </div>
       ];
