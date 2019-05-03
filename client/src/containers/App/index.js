@@ -22,7 +22,58 @@ import {
   walk
 } from "react-sortable-tree";
 
+// import Test from "../../components/MyFiles/example/app";
 
+// const privateData = {
+//   name: 'root',
+//   toggled: true,
+//   children: [
+//       {
+//           name: 'Contacts',
+//           children: [
+//               { name: 'Customers.csv' },
+//               { name: 'Phone.csv' }
+//           ]
+//       },
+//       {
+//           name: 'Buyers',
+//           children: [
+//               {
+//                   name: 'Schools',
+//                   children: [
+//                       { name: 'NJIT' },
+//                       { name: 'Rutgers' }
+//                   ]
+//               }
+//           ]
+//       }
+//   ]
+// };
+// const publicData = {
+//   name: 'root',
+//   toggled: true,
+//   children: [
+//       {
+//           name: 'Items',
+//           children: [
+//               { name: 'Phones.csv' },
+//               { name: 'Stocks.csv' }
+//           ]
+//       },
+//       {
+//           name: 'Sales',
+//           children: [
+//               {
+//                   name: 'Newark',
+//                   children: [
+//                       { name: 'IHOP' },
+//                       { name: 'GDS' }
+//                   ]
+//               }
+//           ]
+//       }
+//   ]
+// };
 class App extends Component {
   constructor(props, context) {
     super(props, context);
@@ -39,8 +90,8 @@ class App extends Component {
       dataChecks: false,
       publicList: [],
       privateList: [],
-      columns: [],
-      rows: [],
+      header: [],
+      data: [],
       showOverlay: false,
       rename: false,
       row: '',
@@ -81,10 +132,10 @@ class App extends Component {
 
   rightClick = (e) => {
     e.preventDefault();
-    //const {showOverlay} = this.state;
-    //this.setState({
-    //  showOverlay: !showOverlay
-    //});
+    const {showOverlay} = this.state;
+    this.setState({
+      showOverlay: !showOverlay
+    });
     console.log("Right Click Acknowledged")
   }
 
@@ -97,7 +148,7 @@ class App extends Component {
     // console.log("TESTING", Object.values(this.state.target)[1].children)
     try{
       if(Object.values(this.state.target)[1].children.includes(".csv")){
-        await this.setState(s => ({ showOverlay: !this.state.showOverlay }));
+        await this.setState(s => ({ showOverlay: true }));
         await this.setState({file: Object.values(this.state.target)[1].children})
       }
       else{
@@ -169,7 +220,6 @@ class App extends Component {
     console.log("File Type: ", fileType)
     this.setState(s => ({ showOverlay: !s.showOverlay }));
     // this.setState({ dataChecks: true });
-    //axios.post(`http://127.0.0.1:5000/changeFileType`,  {"name": fileName, "type": fileType})
   };
 
   readTree = (data) => {
@@ -248,8 +298,16 @@ class App extends Component {
       if(tempArray[i].parent === 'private'){
         rootNode.children.push(tempArray[i])
       } else {
-        //if parent not private
-        
+        for(let j in tempArray){
+          if(tempArray[j].title === tempArray[i].parent){
+            console.log(tempArray[i].parent)
+            let temp = tempArray[i];
+            console.log(temp);
+            tempArray[j].children = temp;
+            console.log(tempArray[j]);
+            // tempArray.splice(i)
+          }
+        }
       }
       
     }
@@ -308,6 +366,7 @@ class App extends Component {
         
         //callback function
         self.readTree(data);
+        console.log(self.state.treeData)
       })
       .catch(function(error) {
         console.log(error);
@@ -339,12 +398,13 @@ class App extends Component {
       if(e.props.children.includes('.csv')){
         this.setState({ canvasTitle: e.props.children });
         console.log(e, " file selected");
-        let res = await axios.post(`http://127.0.0.1:5000/sendFile`,  {"fileName": e.props.children})
-        // let test = await axios.get(`http://127.0.0.1:5000/listPrivateFiles`)
-        console.log("SERVER DICTIONARY", res.data)
-        // let header = res.data[0]
-        // let data = res.data[1]
+        let res = await axios.post(`http://127.0.0.1:5000/openFile`,  {"name": e.props.children})
+        
+        let header = res.data[0]
+        let data = res.data[1]
         // await this.setState({ header: header })
+        console.log("header",  header)
+        console.log("data", data)
       }
     }
     //Create these 2 states
@@ -389,6 +449,8 @@ class App extends Component {
     }
   };
 
+
+
   //move from private to public
   moveFile = async(rowInfo) => {
     console.log(rowInfo);
@@ -403,6 +465,8 @@ class App extends Component {
     newTreeTwo[0].children.push(NEW_NODE)
 
     this.setState({treeDataTwo: newTreeTwo});
+
+
   };
 
   fillBottombar = item => {
@@ -417,6 +481,7 @@ class App extends Component {
   };
 
   checkboxTrigger = checkbox => {
+    console.log(checkbox);
     if (checkbox === false) {
       this.setState({
         checked: false
@@ -429,6 +494,8 @@ class App extends Component {
   };
 
   treeClick = name => {
+    console.log(name);
+
     this.setState({
       canvasTitle: name,
       fileSection: "Private"
@@ -441,6 +508,11 @@ class App extends Component {
     if(node.children){ node.toggled = toggled; }
     this.setState({ cursor: node });
   }
+
+  onClick(e){
+    console.log("askdfhbglsdf")
+  }
+
 
   createNewTree = async (tree, newFile) => {
 
@@ -507,9 +579,7 @@ class App extends Component {
     this.setState({ treeDataTwo })
   }
 
-  addNode = async (rowInfo) => {
-    console.log(rowInfo);
-    
+  addNode = async (rowInfo, newName) => {
     let newItem=true;
     for(let i in this.state.privateList){
       //if(this.state.privateList[i] === newName){
@@ -625,6 +695,30 @@ class App extends Component {
       })
     }
 
+    console.log(rowInfo.node.type)
+    let data = (rowInfo.node.type === 'file') ? {fileName: rowInfo.node.title.props.children} : {fileName: rowInfo.node.title};
+    //request
+    var config = {
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*"
+      }
+    }; 
+    let res = await axios
+      .post(
+        "http://127.0.0.1:5000/remove",
+        data
+      )
+      .then(function(response) {
+        console.log(response);
+
+      })
+      .catch(function(error) {
+        console.log(error);
+      });
+
+    console.log("AFTER REMOVING FOLDER", res)
+
   };
   
   rename = async (rowInfo, newName) => {
@@ -662,10 +756,15 @@ class App extends Component {
       )
       .then(function(response) {
         console.log(response);
+      })
+      .catch(function(error) {
+        console.log(error);
+      });
+
+    console.log("AFTER ADDING FOLDER", res)
 
     // Some component popup with input
     // change name of folder/file to value of input text
-    })
   };
 
   renameFile = (rowInfo) => {
@@ -716,7 +815,7 @@ class App extends Component {
           <button style={this.getStyle()} label="Add" onClick={event => this.addBtn(rowInfo)}>
             Add
           </button>
-        </div>
+          </div>
       ]
     }
     if (rowInfo.node.type === 'folder') {
@@ -751,6 +850,11 @@ class App extends Component {
       ];
     }
   };
+
+  fileType = (e) => {
+    //e.preventDefault()
+    console.log("Right click")
+  }
 
   render() {
     let login;
@@ -854,7 +958,6 @@ class App extends Component {
                   placement="bottom"
                   container={this}
                   containerPadding={20}
-                  rowInfo={this.state.rowInfo}
                 >
                   <Popover id="popover-contained" title="File Type">
                     <FileType 
@@ -896,28 +999,8 @@ class App extends Component {
                     canDrag={({ node }) => !node.noDragging}
                     canDrop={({ node }) => !node.noDrop}
                     canNodeHaveChildren={({ node }) => node.noCopy}
-                    generateNodeProps={rowInfo => ({
-                      buttons: this.checkNode(rowInfo),
-                      //ref: this.attachRef,
-                      onContextMenu: this.handleRightClick,
-                      onClick: () =>  this.fileSelection(rowInfo.node.title),
-                      //onContextMenu: (e) => this.fileType()
-                    })}
                     theme={FileExplorerTheme}
                   />
-                  <Overlay
-                  show={this.state.showOverlay}
-                  target={this.state.target}
-                  placement="bottom"
-                  container={this}
-                  containerPadding={20}
-                >
-                  <Popover id="popover-contained" title="File Type">
-                    <FileType 
-                      submitFileType={this.submitFileType}
-                    />
-                  </Popover>
-                </Overlay>
 
                 </div>
               </div>
@@ -934,7 +1017,6 @@ class App extends Component {
             >
               <Canvas
                 title={this.state.canvasTitle}
-                checkboxTrigger={this.checkboxTrigger}
                 columns={this.state.columns}
                 rows={this.state.rows}
                 datachecks={this.datachecks}
