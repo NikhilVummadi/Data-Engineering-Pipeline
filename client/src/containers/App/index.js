@@ -398,22 +398,10 @@ class App extends Component {
       if(e.props.children.includes('.csv')){
         this.setState({ canvasTitle: e.props.children });
         console.log(e, " file selected");
-        let res = await axios.post(`http://127.0.0.1:5000/openFile`,  {"name": e.props.children})
-        
-        let header = res.data[0]
-        let data = res.data[1]
-        // await this.setState({ header: header })
-        console.log("header",  header)
-        console.log("data", data)
+        let res = await axios.post(`http://127.0.0.1:5000/sendFile`,  {"fileName": e.props.children})
+        console.log("SERVER DICTIONARY", res.data) 
       }
     }
-    //Create these 2 states
-    // labels = []
-    // data = []
-    // Use axios to get the data of this csv from the backend
-    // Store the first index  in labels, and the second index in data
-    // Pass those variables to Canvas
-    // Replace the variavles in Canvas to use the parameters
   };
 
 	datachecks = (check) =>{

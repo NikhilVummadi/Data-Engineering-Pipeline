@@ -41,12 +41,12 @@ class Canvas extends Component {
               }}
             >
             </div>
-            {//columns === [] ?  //columns === []
+            {columns === [] ? 
               <DisplayTable columns={columns} rows={rows} datachecks={datachecks} />
-              //: 
-              //<>
-              //  <h3 style={{ textAlign: "center" }}> THERE IS NO DATA TO BE DISPLAYED </h3>
-              //</>
+              : 
+              <>
+               <h3 style={{ textAlign: "center" }}> THERE IS NO DATA TO BE DISPLAYED </h3>
+              </>
             }
           </>
         ) : (
