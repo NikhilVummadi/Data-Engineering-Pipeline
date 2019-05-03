@@ -21,58 +21,7 @@ import {
   walk
 } from "react-sortable-tree";
 
-// import Test from "../../components/MyFiles/example/app";
 
-// const privateData = {
-//   name: 'root',
-//   toggled: true,
-//   children: [
-//       {
-//           name: 'Contacts',
-//           children: [
-//               { name: 'Customers.csv' },
-//               { name: 'Phone.csv' }
-//           ]
-//       },
-//       {
-//           name: 'Buyers',
-//           children: [
-//               {
-//                   name: 'Schools',
-//                   children: [
-//                       { name: 'NJIT' },
-//                       { name: 'Rutgers' }
-//                   ]
-//               }
-//           ]
-//       }
-//   ]
-// };
-// const publicData = {
-//   name: 'root',
-//   toggled: true,
-//   children: [
-//       {
-//           name: 'Items',
-//           children: [
-//               { name: 'Phones.csv' },
-//               { name: 'Stocks.csv' }
-//           ]
-//       },
-//       {
-//           name: 'Sales',
-//           children: [
-//               {
-//                   name: 'Newark',
-//                   children: [
-//                       { name: 'IHOP' },
-//                       { name: 'GDS' }
-//                   ]
-//               }
-//           ]
-//       }
-//   ]
-// };
 class App extends Component {
   constructor(props, context) {
     super(props, context);
@@ -134,10 +83,10 @@ class App extends Component {
 
   rightClick = (e) => {
     e.preventDefault();
-    const {showOverlay} = this.state;
-    this.setState({
-      showOverlay: !showOverlay
-    });
+    //const {showOverlay} = this.state;
+    //this.setState({
+    //  showOverlay: !showOverlay
+    //});
     console.log("Right Click Acknowledged")
   }
 
@@ -150,7 +99,7 @@ class App extends Component {
     // console.log("TESTING", Object.values(this.state.target)[1].children)
     try{
       if(Object.values(this.state.target)[1].children.includes(".csv")){
-        await this.setState(s => ({ showOverlay: true }));
+        await this.setState(s => ({ showOverlay: !this.state.showOverlay }));
         await this.setState({file: Object.values(this.state.target)[1].children})
       }
       else{
@@ -222,6 +171,7 @@ class App extends Component {
     console.log("File Type: ", fileType)
     this.setState(s => ({ showOverlay: !s.showOverlay }));
     // this.setState({ dataChecks: true });
+    //axios.post(`http://127.0.0.1:5000/changeFileType`,  {"name": fileName, "type": fileType})
   };
 
   readTree = (data) => {
@@ -713,7 +663,7 @@ class App extends Component {
           <button style={this.getStyle()} label="Add" onClick={event => this.addNode(rowInfo)}>
             Add
           </button>
-          </div>
+        </div>
       ]
     }
     if (rowInfo.node.type === 'folder') {
@@ -852,6 +802,7 @@ class App extends Component {
                   placement="bottom"
                   container={this}
                   containerPadding={20}
+                  rowInfo={this.state.rowInfo}
                 >
                   <Popover id="popover-contained" title="File Type">
                     <FileType 
@@ -893,8 +844,28 @@ class App extends Component {
                     canDrag={({ node }) => !node.noDragging}
                     canDrop={({ node }) => !node.noDrop}
                     canNodeHaveChildren={({ node }) => node.noCopy}
+                    generateNodeProps={rowInfo => ({
+                      buttons: this.checkNode(rowInfo),
+                      //ref: this.attachRef,
+                      onContextMenu: this.handleRightClick,
+                      onClick: () =>  this.fileSelection(rowInfo.node.title),
+                      //onContextMenu: (e) => this.fileType()
+                    })}
                     theme={FileExplorerTheme}
                   />
+                  <Overlay
+                  show={this.state.showOverlay}
+                  target={this.state.target}
+                  placement="bottom"
+                  container={this}
+                  containerPadding={20}
+                >
+                  <Popover id="popover-contained" title="File Type">
+                    <FileType 
+                      submitFileType={this.submitFileType}
+                    />
+                  </Popover>
+                </Overlay>
 
                 </div>
               </div>
