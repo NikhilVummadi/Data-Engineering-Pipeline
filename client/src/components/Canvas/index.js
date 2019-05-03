@@ -21,14 +21,13 @@ class Canvas extends Component {
     let { publicFile } = this.state;
     this.setState({ publicFile: !publicFile });
     this.props.checkboxTrigger(this.state.publicFile);
-    console.log(this.state.publicFile);
   };
 
   render() {
-    console.log(this.props);
-    const { title, header, data } = this.props;
+    const { title, columns, rows } = this.props;
     // const { fileType, publicFile } = this.state;
     // console.log("THIS IS THE HEADERS", header)
+    console.log("THIS IS COLUMNS", columns)
     return (
       <div className="container">
         {title ? (
@@ -42,7 +41,13 @@ class Canvas extends Component {
               }}
             >
             </div>
-			<DisplayTable header={header} data={data} />
+            {columns === [] ?
+              <DisplayTable columns={columns} rows={rows} />
+              : 
+              <>
+                <h3 style={{ textAlign: "center" }}> THERE IS NO DATA TO BE DISPLAYED </h3>
+              </>
+            }
           </>
         ) : (
           <></>
