@@ -35,7 +35,7 @@ def loginCheck():
 @app.route('/upload', methods = ['POST'])
 def upload():
     hold = request.files['fileName']
-    mongo1.save_file(hold.filename,hold)
+    mongo1.save_file(hold.filename,hold, content_type='text/csv')
     files = mongo1.db.files
     x = mongo1.db.fs.files
     users = mongo1.db.User

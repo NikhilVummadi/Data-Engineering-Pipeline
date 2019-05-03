@@ -392,7 +392,7 @@ class App extends Component {
         console.log(e, " file selected");
         let res = await axios.post(`http://127.0.0.1:5000/sendFile`,  {"fileName": e.props.children})
         // let test = await axios.get(`http://127.0.0.1:5000/listPrivateFiles`)
-        console.log("SERVER DICTIONARY", res['data'])
+        console.log("SERVER DICTIONARY", res.data)
         // let header = res.data[0]
         // let data = res.data[1]
         // await this.setState({ header: header })
