@@ -11,7 +11,7 @@ import { Overlay, Popover, OverlayTrigger } from 'react-bootstrap';
 import Tooltip from 'react-bootstrap/Tooltip';
 import axios from "axios";
 import "react-sortable-tree/style.css"; // This only needs to be imported once in your app
-import { IoIosAddCircle, IoIosCloseCircle, IoIosArrowDown } from "react-icons/io";
+import { IoIosAddCircle, IoIosCloseCircle, IoIosArrowDown,  } from "react-icons/io";
 import { FaPen } from "react-icons/fa";
 import Rename from "../../components/renameFile"
 import {
@@ -701,54 +701,43 @@ class App extends Component {
     if(rowInfo.treeIndex == 0){
       return [
         <div>
-          <IoIosAddCircle style={{color: 'green'}}>
-          <button style={this.getStyle()} label="Add" onClick={event => this.addNode(rowInfo)}>
-            Add
+          <button label="Add" onClick={event => this.addNode(rowInfo)}>
+            <IoIosAddCircle style={{color: 'forestgreen'}} />
           </button>
-          </IoIosAddCircle>
         </div>
       ]
     }
     if (rowInfo.node.type === 'folder') {
       
         return [<div>
-            <IoIosAddCircle style={{color: 'green'}}>
-            <button  style={this.getStyle()} label="Add" onClick={event => this.addNode(rowInfo)}>
-              Add
+            <button label="Add" onClick={event => this.addNode(rowInfo)}>
+              <IoIosAddCircle style={{color: 'forestgreen'}} />
             </button>
-            </IoIosAddCircle>
-            <IoIosCloseCircle style={{color: 'red'}}>
-            <button  style={this.getStyle()} label="Delete" onClick={event => this.removeNode(rowInfo)}>
-              Remove
+
+            <button label="Delete" onClick={event => this.removeNode(rowInfo)}>
+              <IoIosCloseCircle style={{color: 'crimson'}} />
             </button>
-            </IoIosCloseCircle>
-            <FaPen>
-            <button  style={this.getStyle()}  label="Rename" onClick={event => this.renameFile(rowInfo)}>
-              Rename
+
+            <button label="Rename" onClick={event => this.renameFile(rowInfo)}>
+              <FaPen />
             </button>
-            </FaPen>
-        </div>]
-      // }
-      
+          </div>]
+
     }
     if (rowInfo.node.type === 'file') {
       return [
         <div>
-          <IoIosCloseCircle style={{color: 'red'}}>
-          <button  style={this.getStyle()} label="Delete" onClick={event => this.removeNode(rowInfo)}>
-            Remove
+          <button label="Delete" onClick={event => this.removeNode(rowInfo)}>
+            <IoIosCloseCircle style={{color: 'crimson'}}  />
           </button>
-          </IoIosCloseCircle>
-          <FaPen>
-          <button  style={this.getStyle()} label="Rename" onClick={event => this.renameFile(rowInfo)}>
-            Rename
+          
+          <button label="Rename" onClick={event => this.renameFile(rowInfo)}>
+            <FaPen />
           </button>
-          </FaPen>
-          <IoIosArrowDown style={{color: 'blue'}}>
-          <button  style={this.getStyle()} label="Move" onClick={event => this.moveFile(rowInfo)}>
-            Move
+
+          <button label="Move" onClick={event => this.moveFile(rowInfo)}>
+            <IoIosArrowDown style={{color: 'blue'}} />
           </button>
-          </IoIosArrowDown>
         </div>
       ];
     }
