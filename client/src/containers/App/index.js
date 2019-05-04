@@ -913,28 +913,25 @@ class App extends Component {
                 <SortableTree
                   treeData={this.state.treeData}
                   onChange={this.updateTreeData}
-                  onMoveNode={({ treeData, node, path}) =>
-                    // global.console.debug(
-                    //   "node:",
-                    //   node,
-                    //   "treeIndex:",
-                    //   treeIndex,
-                    //   "path:",
-                    //   path
-                    // )
-                    ({ treeData: this.onMoveNode(treeData)})
-                    // post on move tree
-                    
-                  }
+                  onMoveNode={({ treeData, node, nextParentNode }) => {
+                    console.log(nextParentNode);
+                    console.log(node);
+                    // this.sendMovedState(node, treeData, nextParentNode);
+                  }}
                   canDrag={({ node }) => !node.noDragging}
-                  canDrop={({ node }) => !node.noDrop}
+                  canDrop={({ nextParent }) => {
+                    if (nextParent.type === "file") {
+                      return false;
+                    } else {
+                      return true;
+                    }
+                  }}
                   generateNodeProps={rowInfo => ({
                     buttons: this.checkNode(rowInfo),
                     //ref: this.attachRef,
                     onContextMenu: this.handleRightClick,
-                    onClick: () =>  this.fileSelection(rowInfo.node.title),
+                    onClick: () => this.fileSelection(rowInfo.node.title)
                     //onContextMenu: (e) => this.fileType()
-                    
                   })}
                   theme={FileExplorerTheme}
                 />
