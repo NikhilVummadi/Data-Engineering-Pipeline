@@ -502,56 +502,67 @@ class App extends Component {
   }
 
 
-  createNewTree = async (tree, newFile) => {
+ createNewTree = async (tree, newFile) => {
+    // check if name already exists
+    let check = true;
+    for (let i in this.state.privateList) {
+      if (newFile.name === this.state.privateList[i]) {
+        check = false;
+      }
+    }
+    console.log(newFile);
 
-    let rowInfo = tree;
-    console.log(tree)
-    let NEW_NODE = {title: <a
-              href="#"
-              onClick={() => {
-                this.treeClick(newFile.name);
-              }}
-            >{newFile.name}</a>
-            , type: 'file'};
-    let {node, treeIndex, path} = rowInfo;
-    let parentNode = getNodeAtPath({
+    if (check) {
+      let rowInfo = tree;
+      console.log(tree);
+      let NEW_NODE = {
+        title: (
+          <a
+            href="#"
+            onClick={() => {
+              this.treeClick(newFile.name);
+            }}
+          >
+            {newFile.name}
+          </a>
+        ),
+        type: "file"
+      };
+      let { node, treeIndex, path } = rowInfo;
+      let parentNode = getNodeAtPath({
         treeData: this.state.treeData,
-        path : path,
-        getNodeKey: ({ treeIndex }) =>  treeIndex,
-        ignoreCollapsed : true
-    });
-    
-    let newTree = insertNode({
-            treeData: this.state.treeData,
-            depth: 1,
-            minimumTreeIndex: 1,
-            newNode: NEW_NODE,
-            parentKey: null,
-            getNodeKey: ({ treeIndex }) =>  treeIndex,
-            expandParent: false
-     });
-
-    this.setState({
-      treeData: newTree.treeData
-    });
-
-    let formData = new FormData();
-    formData.set('fileName', newFile);
-    let res = await axios
-      .post(
-        "http://127.0.0.1:5000/upload",
-        formData,
-        console.log(newFile)
-      )
-      .then(function(response) {
-        console.log(response);
-
-      })
-      .catch(function(error) {
-        console.log(error);
+        path: path,
+        getNodeKey: ({ treeIndex }) => treeIndex,
+        ignoreCollapsed: true
       });
 
-    console.log("AFTER ADDIng upload", res)
+      let newTree = insertNode({
+        treeData: this.state.treeData,
+        depth: 1,
+        minimumTreeIndex: 1,
+        newNode: NEW_NODE,
+        parentKey: null,
+        getNodeKey: ({ treeIndex }) => treeIndex,
+        expandParent: false
+      });
+
+      this.setState({
+        treeData: newTree.treeData
+      });
+
+      let formData = new FormData();
+      formData.set("fileName", newFile);
+      let res = await axios
+        .post("http://127.0.0.1:5000/upload", formData, console.log(newFile))
+        .then(function(response) {
+          console.log(response);
+        })
+        .catch(function(error) {
+          console.log(error);
+        });
+
+      console.log("AFTER ADDIng upload", res);
+    }
 
     // return list;
   };
@@ -568,64 +579,61 @@ class App extends Component {
   }
 
   addNode = async (rowInfo, newName) => {
-    let newItem=true;
-    for(let i in this.state.privateList){
-      //if(this.state.privateList[i] === newName){
-      //  newItem = false
-      //}
+    let check = true;
+    for (let i in this.state.privateList) {
+      if (newName.title === this.state.privateList[i]) {
+        check = false;
+      }
     }
 
-    if(newItem){
+    if (check) {
       //let NEW_NODE = {title: newName, type: 'folder'};
-      let {node, treeIndex, path} = rowInfo;
+      let { node, treeIndex, path } = rowInfo;
       // path.pop();
       let parentNode = getNodeAtPath({
-          treeData: this.state.treeData,
-          path : rowInfo.path,
-          getNodeKey: ({ treeIndex }) =>  treeIndex,
-          ignoreCollapsed : true
+        treeData: this.state.treeData,
+        path: rowInfo.path,
+        getNodeKey: ({ treeIndex }) => treeIndex,
+        ignoreCollapsed: true
       });
       let getNodeKey = ({ node: object, treeIndex: number }) => {
-          return number;
+        return number;
       };
       let parentKey = getNodeKey(parentNode);
-      if(parentKey == -1) {
-          parentKey = null;
+      if (parentKey == -1) {
+        parentKey = null;
       }
-      
+
       let newTree = insertNode({
-              treeData: this.state.treeData,
-              depth: 3,
-              minimumTreeIndex: rowInfo.treeIndex+1,
-      //        newNode: NEW_NODE,
-              parentKey: parentKey,
-              getNodeKey: ({ treeIndex }) =>  treeIndex,
-              expandParent: false
+        treeData: this.state.treeData,
+        depth: 3,
+        minimumTreeIndex: rowInfo.treeIndex + 1,
+        //        newNode: NEW_NODE,
+        parentKey: parentKey,
+        getNodeKey: ({ treeIndex }) => treeIndex,
+        expandParent: false
       });
 
-      this.setState({treeData: newTree.treeData,
-        folderCount: this.state.folderCount+1,
-          privateList: [...this.state.privateList, rowInfo.node.title]
-        });
+      this.setState({
+        treeData: newTree.treeData,
+        folderCount: this.state.folderCount + 1,
+        privateList: [...this.state.privateList, rowInfo.node.title]
+      });
 
-      console.log(rowInfo)
-      let data = { parentName: rowInfo.node.title }//originally contained newName
+      console.log(rowInfo);
+      let data = { parentName: rowInfo.node.title }; //originally contained newName
       let res = await axios
-        .post(
-          "http://127.0.0.1:5000/addFolder",
-          data
-        )
+        .post("http://127.0.0.1:5000/addFolder", data)
         .then(function(response) {
           console.log(response);
-
         })
         .catch(function(error) {
           console.log(error);
         });
 
-      console.log("AFTER ADDING FOLDER", res)
-      console.log(this.state.privateList)
-      }
+      console.log("AFTER ADDING FOLDER", res);
+      console.log(this.state.privateList);
+    }
   };
 
   addBtn = rowInfo => {
