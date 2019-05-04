@@ -222,102 +222,102 @@ class App extends Component {
     // this.setState({ dataChecks: true });
   };
 
-  readTree = (data) => {
+  readTree = data => {
     let treeData = data;
     let arrayKeys = Object.keys(treeData);
     let arrayValues = Object.values(treeData);
-    let arrayObj = []
-    let tempArray = []
+    let privateContainer = [];
+    let arrayObj = [];
+    let tempArray = [];
 
-    console.log(arrayKeys)
-    console.log(arrayValues)
+    console.log(arrayKeys);
+    console.log(arrayValues);
 
     // create array of objects with parents, children, and title
-    for(let i in arrayKeys){
+    for (let i in arrayKeys) {
       let obj = {};
       let keysLined = arrayKeys[i];
       let valuesLined = arrayValues[i]; //value within key
       //list inside arrayValues list
-      console.log(keysLined)
-      for(let j in valuesLined){
-        console.log(valuesLined[j])
+      console.log(keysLined);
+      for (let j in valuesLined) {
+        console.log(valuesLined[j]);
         obj.title = valuesLined[j];
         obj.parent = keysLined;
-        
+        obj.children = [];
+        privateContainer.push(valuesLined[j]);
         arrayObj.push(obj);
         console.log(obj);
-        obj = {}
+        obj = {};
+      }
+    }
+
+    //check if node is file or folder using key array
+    tempArray = arrayObj;
+    for (let i in tempArray) {
+      let temp = tempArray[i];
+      console.log(temp);
+      let bool = false;
+      for (let j in arrayKeys) {
+        //keys are all folder node with value
+        if (arrayKeys[j] === temp.title) {
+          bool = true;
         }
       }
-      
-     //check if node is file or folder using key array
-     tempArray = arrayObj;
-     for(let i in tempArray){
-       let temp = tempArray[i];
-       console.log(temp)
-       let bool = false;
-       for(let j in arrayKeys){
-        //keys are all folder node with value 
-        if(arrayKeys[j] === temp.title){
-          bool = true
-        }
-       }
-       if(bool){
-         temp.type = 'folder'
-       } else {
-         temp.type = 'file'
-       }
-     }
-    
+      if (bool) {
+        temp.type = "folder";
+      } else {
+        temp.type = "file";
+      }
+    }
 
-    
-    console.log(tempArray)
-
-    
+    console.log(tempArray);
 
     let rootNode = {
-      title: 'private',
+      title: "private",
       children: [],
-      type: 'folder'
-    }
-    
-    
-    
+      type: "folder"
+    };
+
     // loop through arrayObj taking each node out of list, order them into tree using parent and title
-    for(let i in tempArray){
-      console.log(i)
-      if(tempArray[i].type === 'file'){
-        tempArray[i].title = <a
-        href="#"
-        onClick={() => {
-          this.treeClick(tempArray[i].title);
-        }}
-      >{tempArray[i].title}</a>
+    for (let i in tempArray) {
+      console.log(i);
+      if (tempArray[i].type === "file") {
+        tempArray[i].title = (
+          <a
+            href="#"
+            onClick={() => {
+              this.treeClick(tempArray[i].title);
+            }}
+          >
+            {tempArray[i].title}
+          </a>
+        );
       }
       // let popped = tempArray.pop();{
-      if(tempArray[i].parent === 'private'){
-        rootNode.children.push(tempArray[i])
+      if (tempArray[i].parent === "private") {
+        rootNode.children.push(tempArray[i]);
       } else {
-        for(let j in tempArray){
-          if(tempArray[j].title === tempArray[i].parent){
-            console.log(tempArray[i].parent)
+        for (let j in tempArray) {
+          if (tempArray[j].title === tempArray[i].parent) {
+            console.log(tempArray[i].parent);
             let temp = tempArray[i];
             console.log(temp);
-            tempArray[j].children = temp;
+            tempArray[j].children.push(temp);
             console.log(tempArray[j]);
-            // tempArray.splice(i)
+            // tempArray.splice(i);
           }
         }
       }
-      
     }
 
+    console.log(rootNode);
+
     this.setState({
-      treeData: [rootNode],
-    })
-  
-  
-  }
+      treeData: [...this.state.treeData, rootNode],
+      privateList: privateContainer
+    });
+  };
 
   readPublic = (data) => {
     console.log(data);
