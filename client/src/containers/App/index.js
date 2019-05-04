@@ -980,10 +980,15 @@ class App extends Component {
                         path
                       )
                     }
-                    
                     canDrag={({ node }) => !node.noDragging}
-                    canDrop={({ node }) => !node.noDrop}
-                    canNodeHaveChildren={({ node }) => node.noCopy}
+                    canDrop={({ nextParent }) => {
+                      if (nextParent.type === "file") {
+                        return false;
+                      } else {
+                        return true;
+                      }
+                    }}
+                    // canNodeHaveChildren={({ node }) => node.noCopy}
                     theme={FileExplorerTheme}
                   />
 
