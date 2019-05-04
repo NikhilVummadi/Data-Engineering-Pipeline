@@ -15,6 +15,24 @@ import pandas as pd
 app = Flask(__name__)
 CORS(app)
 
+def reactGridify(df):
+    keys=df.columns.tolist() #list of columns
+    values=df.values.tolist() #list of rows(also lists)
+    columns=[]
+    for key in keys:
+        columnDict={}
+        columnDict['key']=key.lower().replace(" ", "")
+        columnDict['name']=key
+        columns.append(columnDict)
+        
+    rows=[]
+    for value in values:
+        temp = {}
+        for column, data_value in zip(columns, value):
+            temp[column['key']] = data_value
+        rows.append(temp)
+    return (columns, rows)
+
 @app.route('/')
 def hello():
     return("This is the backEnd: Use /listPrivateFiles, /listPublicFiles,/loginCheck send userName and userPass, /upload to upload files, /sendFile to send file to front end use filename, /changeMast to change flie type use fileName and status, /addFolder to add folder folderName and parentName")
@@ -94,7 +112,9 @@ def sendFile():
     fname = hold['fileName']
     response = mongo1.send_file(fname)
     print("THIS SI THE RESPONSE", response)
-    return response
+    df=pd.read_csv('/Analytiq/Private/SacrementocrimeJanuary2006.csv')
+    return reactGridify(df)
+    #return response
 
 
 @app.route('/changeMast', methods = ['POST'])
@@ -283,7 +303,8 @@ def dataCheck():
     checks = hold['check']
     fileData = hold['fileData']
 
-    df=pd.read_json(fileData)
+    #df=pd.read_json(fileData)
+    df=pd.read_csv('/Analytiq/Private/SacrementocrimeJanuary2006.csv')
 
     if checks=='stats':
         new_df=stats(df)
@@ -294,6 +315,7 @@ def dataCheck():
     elif checks=='missing':
         new_df=missing(df)
 
+    return reactGridify(new_df)
 
 if __name__ == '__main__':
     app.run(debug=True)
