@@ -7,73 +7,16 @@ import CanvasBanner from "../../images/canvasBanner.jpg";
 import NavLink from "react-bootstrap/NavLink";
 import SortableTree from "react-sortable-tree";
 import FileExplorerTheme from 'react-sortable-tree-theme-file-explorer';
-import { Overlay, Popover, OverlayTrigger } from 'react-bootstrap';
-import Tooltip from 'react-bootstrap/Tooltip';
+import { Overlay, Popover } from 'react-bootstrap';
 import axios from "axios";
 import "react-sortable-tree/style.css"; // This only needs to be imported once in your app
 import Rename from "../../components/renameFile"
 import {
   getNodeAtPath,
-  addNodeUnderParent,
   removeNodeAtPath,
   insertNode,
-  getTreeFromFlatData,
-  map,
-  walk
 } from "react-sortable-tree";
 
-// import Test from "../../components/MyFiles/example/app";
-
-// const privateData = {
-//   name: 'root',
-//   toggled: true,
-//   children: [
-//       {
-//           name: 'Contacts',
-//           children: [
-//               { name: 'Customers.csv' },
-//               { name: 'Phone.csv' }
-//           ]
-//       },
-//       {
-//           name: 'Buyers',
-//           children: [
-//               {
-//                   name: 'Schools',
-//                   children: [
-//                       { name: 'NJIT' },
-//                       { name: 'Rutgers' }
-//                   ]
-//               }
-//           ]
-//       }
-//   ]
-// };
-// const publicData = {
-//   name: 'root',
-//   toggled: true,
-//   children: [
-//       {
-//           name: 'Items',
-//           children: [
-//               { name: 'Phones.csv' },
-//               { name: 'Stocks.csv' }
-//           ]
-//       },
-//       {
-//           name: 'Sales',
-//           children: [
-//               {
-//                   name: 'Newark',
-//                   children: [
-//                       { name: 'IHOP' },
-//                       { name: 'GDS' }
-//                   ]
-//               }
-//           ]
-//       }
-//   ]
-// };
 class App extends Component {
   constructor(props, context) {
     super(props, context);
@@ -132,7 +75,6 @@ class App extends Component {
     e.preventDefault();
     // console.log("HSDF", file)
     await this.setState({target: e.target})
-    // console.log("THIS IS TARGET", this.state.target)
     // const { file } = target.span.includes(".csv")
     // console.log("TESTING", Object.values(this.state.target)[1].children)
     try{
@@ -361,7 +303,7 @@ class App extends Component {
   }
 
   fileSelection = async (e) => {
-    if(e.props != undefined)  
+    if(e.props !== undefined)  
     {
       if(e.props.children.includes('.csv')){
         this.setState({ canvasTitle: e.props.children });
@@ -369,7 +311,12 @@ class App extends Component {
         await this.setState({columns: res.data[0]})
         await this.setState({rows: res.data[1]})
       }
+      else{
+        await this.setState({columns: []})
+        await this.setState({rows: []})
+      }
     }
+
   };
 
 	datachecks = (check) =>{
@@ -444,13 +391,6 @@ class App extends Component {
     });
   };
 
-  onToggle(node, toggled){
-    if(this.state.cursor){this.state.cursor.active = false;}
-    node.active = true;
-    if(node.children){ node.toggled = toggled; }
-    this.setState({ cursor: node });
-  }
-
 
  createNewTree = async (tree, newFile) => {
     // check if name already exists
@@ -462,7 +402,7 @@ class App extends Component {
     }
 
     if (check) {
-      let rowInfo = tree;
+      // let rowInfo = tree;
       let NEW_NODE = {
         title: (
           <a
@@ -500,7 +440,7 @@ class App extends Component {
 
       let formData = new FormData();
       formData.set("fileName", newFile);
-      let res = await axios
+      await axios
         .post("http://127.0.0.1:5000/upload", formData, console.log(newFile))
         .then(function(response) {
           console.log(response);
@@ -526,6 +466,8 @@ class App extends Component {
 
 addNode = async (rowInfo, newName) => {
     let check = true;
+    // console.log("ROW INFO", rowInfo)
+    // console.log("newName", newName)
     for (let i in this.state.privateList) {
       if (newName.title === this.state.privateList[i]) {
         check = false;
@@ -534,7 +476,7 @@ addNode = async (rowInfo, newName) => {
 
     if (check) {
       let NEW_NODE = { title: newName, type: "folder" };
-      let { node, treeIndex, path } = rowInfo;
+      // let { node, treeIndex, path } = rowInfo;
       // path.pop();
       let parentNode = getNodeAtPath({
         treeData: this.state.treeData,
@@ -546,7 +488,7 @@ addNode = async (rowInfo, newName) => {
         return number;
       };
       let parentKey = getNodeKey(parentNode);
-      if (parentKey == -1) {
+      if (parentKey === -1) {
         parentKey = null;
       }
 
@@ -567,7 +509,7 @@ addNode = async (rowInfo, newName) => {
       });
 
       let data = { folderName: newName, parentName: rowInfo.node.title }; //originally contained newName
-      let res = await axios
+      await axios
         .post("http://127.0.0.1:5000/addFolder", data)
         .then(function(response) {
           console.log(response);
@@ -600,7 +542,7 @@ addNode = async (rowInfo, newName) => {
   removeNode = async (rowInfo) => {
 
     let newList = [];
-    let { node, treeIndex, path } = rowInfo;
+    // let { node, treeIndex, path } = rowInfo;
     // for(let i in this.state.privateList){
     //   if(this.state.privateList[i] != rowInfo.node.sub){
     //     newList.push(this.state.privateList[i])
@@ -638,7 +580,7 @@ addNode = async (rowInfo, newName) => {
     //     "Access-Control-Allow-Origin": "*"
     //   }
     // }; 
-    let res = await axios
+    await axios
       .post(
         "http://127.0.0.1:5000/remove",
         data
@@ -658,7 +600,7 @@ addNode = async (rowInfo, newName) => {
     if(rowInfo.node.type === 'file'){
       depth = rowInfo.node.title.props.children;
     }
-    if(rowInfo.node.type == 'file'){
+    if(rowInfo.node.type === 'file'){
       rowInfo.node.title = <a
       href="#"
       onClick={() => {
@@ -670,12 +612,12 @@ addNode = async (rowInfo, newName) => {
       rowInfo.node.title = newName
     }
 
-    let data = (rowInfo.node.type == 'file') ? {
+    let data = (rowInfo.node.type === 'file') ? {
       folderName: depth, newFolderName: newName
     } : { folderName: oldName, newFolderName: newName }
 
     //request
-    let res = await axios
+    await axios
       .post(
         "http://127.0.0.1:5000/rename",
         data
@@ -711,7 +653,7 @@ addNode = async (rowInfo, newName) => {
       treeData: this.state.treeData
     })
 
-    let res = await axios
+    await axios
     .post(
       "http://127.0.0.1:5000/moveFiles",
       { folderName: node.title, parentName: node.parent },
@@ -726,7 +668,7 @@ addNode = async (rowInfo, newName) => {
   }
 
   checkNode = (rowInfo) => {
-    if(rowInfo.treeIndex == 0){
+    if(rowInfo.treeIndex === 0){
       return [
         <div>
           <button style={this.getStyle()} label="Add" onClick={event => this.addBtn(rowInfo)}>
@@ -770,7 +712,7 @@ addNode = async (rowInfo, newName) => {
 
   render() {
     let login;
-    const {showOverlay, target} = this.state;
+    // const {showOverlay, target} = this.state;
     if (this.state.loginState === true) {
       login = (
         <div>

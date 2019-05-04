@@ -26,9 +26,7 @@ class Canvas extends Component {
   render() {
     const { title, columns, rows, datachecks } = this.props;
     // const { fileType, publicFile } = this.state;
-    // console.log("THIS IS THE HEADERS", header)
-    console.log("THIS IS COLUMNS", columns)
-    console.log("ROWS: ", rows)
+    // console.log("THIS IS THE HEADERS", header);
     return (
       <div className="container">
         {title ? (
