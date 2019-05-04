@@ -28,6 +28,7 @@ class Canvas extends Component {
     // const { fileType, publicFile } = this.state;
     // console.log("THIS IS THE HEADERS", header)
     console.log("THIS IS COLUMNS", columns)
+    console.log("ROWS: ", rows)
     return (
       <div className="container">
         {title ? (
@@ -41,7 +42,7 @@ class Canvas extends Component {
               }}
             >
             </div>
-            {columns === [] ? 
+            {columns? 
               <DisplayTable columns={columns} rows={rows} datachecks={datachecks} />
               : 
               <>

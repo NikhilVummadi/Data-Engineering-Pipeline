@@ -31,6 +31,7 @@ def reactGridify(df):
         for column, data_value in zip(columns, value):
             temp[column['key']] = data_value
         rows.append(temp)
+    print("Formatted Columns:\n" + str(columns))    
     return (columns, rows)
 
 @app.route('/')
@@ -112,8 +113,8 @@ def sendFile():
     fname = hold['fileName']
     response = mongo1.send_file(fname)
     print("THIS SI THE RESPONSE", response)
-    df=pd.read_csv('/Analytiq/Private/SacrementocrimeJanuary2006.csv')
-    return reactGridify(df)
+    df=pd.read_csv('Analytiq/Private/SacramentocrimeJanuary2006.csv')
+    return jsonify(reactGridify(df))
     #return response
 
 
@@ -304,7 +305,7 @@ def dataCheck():
     fileData = hold['fileData']
 
     #df=pd.read_json(fileData)
-    df=pd.read_csv('/Analytiq/Private/SacrementocrimeJanuary2006.csv')
+    df=pd.read_csv('Analytiq/Private/SacramentocrimeJanuary2006.csv')
 
     if checks=='stats':
         new_df=stats(df)
