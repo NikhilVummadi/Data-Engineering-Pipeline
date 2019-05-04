@@ -578,7 +578,7 @@ class App extends Component {
     this.setState({ treeDataTwo })
   }
 
-  addNode = async (rowInfo, newName) => {
+addNode = async (rowInfo, newName) => {
     let check = true;
     for (let i in this.state.privateList) {
       if (newName.title === this.state.privateList[i]) {
@@ -587,7 +587,7 @@ class App extends Component {
     }
 
     if (check) {
-      //let NEW_NODE = {title: newName, type: 'folder'};
+      let NEW_NODE = { title: newName, type: "folder" };
       let { node, treeIndex, path } = rowInfo;
       // path.pop();
       let parentNode = getNodeAtPath({
@@ -608,7 +608,7 @@ class App extends Component {
         treeData: this.state.treeData,
         depth: 3,
         minimumTreeIndex: rowInfo.treeIndex + 1,
-        //        newNode: NEW_NODE,
+        newNode: NEW_NODE,
         parentKey: parentKey,
         getNodeKey: ({ treeIndex }) => treeIndex,
         expandParent: false
@@ -621,7 +621,7 @@ class App extends Component {
       });
 
       console.log(rowInfo);
-      let data = { parentName: rowInfo.node.title }; //originally contained newName
+      let data = { folderName: newName, parentName: rowInfo.node.title }; //originally contained newName
       let res = await axios
         .post("http://127.0.0.1:5000/addFolder", data)
         .then(function(response) {
@@ -635,6 +635,7 @@ class App extends Component {
       console.log(this.state.privateList);
     }
   };
+
 
   addBtn = rowInfo => {
     console.log('add button')
