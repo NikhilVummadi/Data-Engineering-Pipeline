@@ -648,6 +648,31 @@ addNode = async (rowInfo, newName) => {
     
   };
 
+	sendMovedState = async (node, treeData, parent) => {
+    console.log(node);
+    this.setState({
+      treeData: this.state.treeData
+    });
+
+    console.log(node);
+    let name = node.type === "folder" ? node.title : node.title.props.children;
+
+    let res = await axios
+      .post("http://127.0.0.1:5000/moveFiles", {
+        folderName: name,
+        parentName: parent.title
+      })
+      .then(function(response) {
+        console.log(response);
+        console.log(node);
+      })
+      .catch(function(error) {
+        console.log(error);
+      });
+
+    console.log("AFTER move", res);
+  };
+
   onMoveNode = async(node, path) => {
     this.setState({
       treeData: this.state.treeData
