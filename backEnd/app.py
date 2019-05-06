@@ -113,9 +113,9 @@ def sendFile():
     fname = hold['fileName']
     response = mongo1.send_file(fname)
     print("THIS SI THE RESPONSE", response)
-    df=pd.read_csv('Analytiq/Private/SacramentocrimeJanuary2006.csv')
-    return jsonify(reactGridify(df))
-    #return response
+    #df=pd.read_csv('Analytiq/Private/SacramentocrimeJanuary2006.csv')
+    #return jsonify(reactGridify(df))
+    return response
 
 
 @app.route('/changeMast', methods = ['POST'])
@@ -305,7 +305,8 @@ def dataCheck():
     fileData = hold['fileData']
 
     #df=pd.read_json(fileData)
-    df=pd.read_csv('Analytiq/Private/SacramentocrimeJanuary2006.csv')
+    df=pd.read_csv(fileData)
+    #df=pd.read_csv('Analytiq/Private/SacramentocrimeJanuary2006.csv')
 
     if checks=='stats':
         new_df=stats(df)
